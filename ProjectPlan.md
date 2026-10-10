@@ -46,7 +46,7 @@ The Crashes extract contains only 2024 dates, exceeds 100 records, and has uniqu
 
 | Official dataset | Initial extract | Contribution and identifiers |
 | --- | --- | --- |
-| [Traffic Crashes – Crashes](https://data.cityofchicago.org/Transportation/Traffic-Crashes-Crashes/85ca-t3if) | 112,057 rows; 49 columns | (Stacy: Describe crash records, relevant fields, the shared identifier, and how this dataset supports the research questions.) |
+| [Traffic Crashes – Crashes](https://data.cityofchicago.org/Transportation/Traffic-Crashes-Crashes/85ca-t3if) | 112,057 rows; 49 columns | Each row represents a recorded crash. CRASH_RECORD_ID identifies each crash and links it to the Vehicles and People datasets. Relevant fields include CRASH_DATE, WEATHER_CONDITION, LIGHTING_CONDITION, FIRST_CRASH_TYPE, and injury summary fields such as INJURIES_TOTAL. This dataset defines the 2024 crash scope and provides crash-level context. Its injury totals will also be compared with aggregated People records as a consistency check, with any discrepancies investigated and documented.  |
 | [Traffic Crashes – Vehicles](https://data.cityofchicago.org/Transportation/Traffic-Crashes-Vehicles/68nd-jvt3) | 228,318 rows; 71 columns | (Allen: Describe crash-unit records, relevant vehicle fields, CRASH_UNIT_ID, VEHICLE_ID, and CRASH_RECORD_ID. Explain how this dataset contributes information beyond Crashes and People.) |
 | [Traffic Crashes – People](https://data.cityofchicago.org/Transportation/Traffic-Crashes-People/u6pd-qa9d) | 246,702 rows; 29 columns | (Zijian: Describe person records, PERSON_ID, occupant roles, injury classification, and vehicle/crash identifiers. Explain how this dataset supports the research questions.) |
 
