@@ -92,7 +92,9 @@ Preliminary checks found no missing or duplicate CRASH_RECORD_ID values and conf
 
 ### Metadata and Data Documentation
 
-(Stacy: Outline plans for the data dictionary and standard-based machine-readable metadata.)
+We will create a data dictionary in docs/ describing field names, meanings, data types, identifiers, category values, and missing-value conventions for the fields used in our project. Each member will document their own dataset, and Stacy will compile these descriptions and document derived fields, including road-user groups and injury indicators.
+
+We will also create a machine-readable metadata file in JSON-LD using Schema.org Dataset. It will describe the project title, purpose, contributors, data sources, temporal and spatial coverage, file formats, access locations, and applicable data-use terms. The documentation will explain how the datasets are linked and how derived variables are calculated to support understanding and reuse.
 
 ## Timeline
 
