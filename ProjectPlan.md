@@ -56,15 +56,23 @@ The Crashes extract contains only 2024 dates, exceeds 100 records, and has uniqu
 
 ### Lifecycle, Acquisition, and Organization
 
-(Stacy: Describe the lifecycle model, data acquisition, SHA-256 checks, and file organization.)
+We will follow the USGS Science Data Lifecycle introduced in Week 1. Planning will define our questions and responsibilities; acquisition will obtain the three datasets; processing will cover quality assessment, cleaning, and integration; analysis will produce tables and charts. We will preserve the data snapshots, scripts, and documentation and share the project through GitHub releases. Documentation, quality management, and backups will support all stages.
+
+Acquisition scripts will retrieve records with crash dates from January 1, 2024, up to but excluding January 1, 2025. We will record source URLs, retrieval dates, filtering conditions, and row counts. SHA-256 checksums will identify the acquired files and allow later copies to be checked against the saved snapshots. As the source data may change, a new download may have a different checksum.
+
+The datasets are tabular CSV files containing identifiers, categorical values, numeric values, and dates. We will preserve identifiers as strings and store unchanged source files in data/raw/, cleaned files in data/cleaned/, and integrated files in data/integrated/. Scripts will be stored in scripts/, tables and charts in results/, and metadata and the data dictionary in docs/. All scripts will use relative paths.
 
 ### Overall Assessment and Cleaning
 
-(Stacy: Briefly introduce the assessment and cleaning workflow, covering accuracy, completeness, timeliness, and consistency.)
+Before integration, we will assess each dataset for accuracy, completeness, timeliness, and consistency. Checks will examine valid values and ranges, missing data, coverage of the 2024 study period, duplicate identifiers, and consistent formats and categories. These checks can identify potential errors but cannot independently confirm every recorded crash detail.
+
+Cleaning will address the issues found through assessment. We will standardize formats where needed, investigate duplicates and invalid values, and distinguish missing information from fields that do not apply to a record. We will document each cleaning decision and the number of affected records, preserve the raw files, and reassess the cleaned data before integration.
 
 ### Crashes Assessment and Cleaning
 
-(Stacy: Outline quality checks across the four required dimensions and planned cleaning methods.)
+For accuracy, we will check that injury counts are non-negative integers and that INJURIES_TOTAL agrees with the sum of the fatal, incapacitating, non-incapacitating, and reported-but-not-evident injury counts. For completeness, we will measure missingness in CRASH_RECORD_ID, CRASH_DATE, and injury summary fields. For timeliness, we will confirm that crash dates within fall 2024 and record the retrieval date, noting that historical records may be revised. For consistency, we will check identifier uniqueness, date formats, and agreement between CRASH_DATE and CRASH_MONTH.
+
+Preliminary checks found no missing or duplicate CRASH_RECORD_ID values and confirmed that all crash dates fall within 2024. We will standardize date and numeric formats as needed and investigate any invalid counts or inconsistencies. Missing injury counts will not automatically be replaced with zero. Corrections or exclusions will be documented, and unresolved issues will be flagged before integration.
 
 ### Vehicles Assessment and Cleaning
 
