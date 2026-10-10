@@ -2,7 +2,13 @@
 
 ## Overview
 
-(Stacy: Describe the project goal and planned approach in no more than 250 words.)
+This project will examine injury outcomes among people involved in recorded Chicago traffic crashes  in 2024. We will compare injury proportions and injury severity among pedestrians, cyclists, drivers and passengers. We will also compare injury proportions among occupants of passenger cars and SUVs.
+
+We will integrate three datasets from the Chicago Data Portal: Traffic Crashes - Crashes, Vehicles, and People. These datasets provide complementary information about crash circumstances, vehicle types, and individual injury outcomes.
+
+Our main focus is building a documented and reproducible data curation workflow. We will acquire and preserve the raw CSV files, assess each dataset for accuracy, completeness, timeliness, and consistency, and clean the issues identified. We will then link the cleaned datasets using crash and vehicle identifiers and assess the integrated data for missing matches, duplicate records, and inconsistent values. Separate Python scripts connected by a run-all script will reproduce the workflow from acquisition through analysis.
+
+The final analysis will use summary tables and bar charts. We will document data sources, cleaning decisions, limitations, and field definitions to support reuse. Our findings will describe injury outcomes within recorded crashes, rather than the overall risk of traveling by each mode.
 
 ## Team
 
@@ -17,7 +23,14 @@ Each member will write the report sections and field descriptions for their own 
 
 ## Research Questions
 
-(Stacy: State the research questions that the three datasets will be used to answer.)
+We will address two research questions:
+
+1. How do injury proportions and the distribution of injury severity differ among pedestrians, cyclists, drivers, and passengers involved in recorded Chicago traffic crashes in 2024?
+2. Among drivers and passengers, how do injury proportions differ between those in passenger cars and those in SUVs?
+
+These groups correspond to the PEDESTIRAN, BICYCLE, DRIVER and PASSENGER values in the People dataset. Passenger cars and SUVs will be identified using the PASSENGER and SPORT UTILITY VEHICLE (SUV) values in the Vehicles dataset's VEHICLE_TYPE field.
+
+For each group, the injury proportion will be calculated as the number of people with a recorded injury divided by the number with a known injury classification. Missing injury classifications will be reported separately. These comparisons describe outcomes among people involved in recorded crashes, rather than the overall risk of traveling by each mode.
 
 ### Planned Analysis Approach
 
