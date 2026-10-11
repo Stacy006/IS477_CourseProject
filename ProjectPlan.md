@@ -76,7 +76,7 @@ Preliminary checks found no missing or duplicate CRASH_RECORD_ID values and conf
 
 ### Vehicles Assessment and Cleaning
 
-(Allen: Outline quality checks across the four required dimensions and planned cleaning methods.)
+We will examine the Traffic Crashes Vehicles data set to understand the data structure, including number of observations, data types, and important variables that is highly related to crashes such as VEHICLE_TYPE, MAKE, and MODEL. Then, four aspect of data value will be evaluated, which is completeness, uniqueness, consistency, and validity. These aspects includes checking the completeness of the data set, including the existence of missing values, especially important variables such as MODEL, MAKE, and vehicles types. We will also be checking whether there are repetitive observations using CRASH_RECORD_ID and VEHICLE_ID as references to prevents its affect on accuracy. Checking consistency of classification criteria and data format and ensuring that each variables actually presents data in a reasonable ranges such if unreasonable data or outlier exist are what we will be performing for the later two aspect. 
 
 ### People Assessment and Cleaning
 
@@ -88,7 +88,7 @@ Preliminary checks found no missing or duplicate CRASH_RECORD_ID values and conf
 
 ### Automation, Reproducibility, and Ethics
 
-(Allen: Outline workflow automation, reproduction steps, data-use terms, and the software license.)
+We plan to use python to automatically collect data, clean data, and integrate data to reduce manual error and improve efficiency. We will organize the code into reusable function, ensuring that processing to be consistant. To enure that the result will be reproducable, we will present data source, data cleaning process, and method of analysis. Meanwhile, we will also use GitHub to tract the modification of codes and files. Allowing other to trace back from result. In the aspect of ethics, we will use crash data from public and ensure that the usage comply with applicable requirements. Moreover, we will try to avoid identifying the identy of the individual in the observation and present our results in an agregated manner as much as we can.
 
 ### Metadata and Data Documentation
 
