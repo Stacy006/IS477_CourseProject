@@ -2,13 +2,11 @@
 
 ## Overview
 
-This project will compare injury proportions and severity among pedestrians, cyclists, drivers, and passengers in recorded Chicago traffic crashes in 2024, and injury proportions between passenger-car and SUV occupants. We will integrate the Chicago Data Portal's Crashes, Vehicles, and People datasets.
-
-Our focus is reproducible data curation: acquisition, assessment across four quality dimensions, cleaning, integration, post-integration validation, and descriptive analysis. Separate Python scripts coordinated by a run-all script will produce tables and charts. Preserved data and documented sources, methods, and field definitions will support reuse.
+This project will integrate Chicago's Crashes, Vehicles, and People datasets to compare 2024 injury outcomes across pedestrians, cyclists, drivers, and passengers, and between passenger-car and SUV occupants. A reproducible workflow will acquire, assess, clean, integrate, validate, and analyze the data, producing documented tables and charts.
 
 ## Team
 
-Members will write and commit their own sections and field descriptions using their GitHub accounts. Compilation means organizing completed contributions; all members will review the final report and documentation.
+Members will commit their own sections and field descriptions through their GitHub accounts; all will review the compiled report and documentation.
 
 | Member | Planned responsibilities |
 | --- | --- |
@@ -26,11 +24,9 @@ Groups correspond to PEDESTRIAN, BICYCLE, DRIVER, and PASSENGER in People.PERSON
 
 ### Planned Analysis Approach
 
-At the person-record level, we will report total, known-classification, injured, and missing/unknown-classification counts for each road-user group. Injury proportions will equal records with fatal, incapacitating, non-incapacitating, or reported-but-not-evident injuries divided by records with known classifications. Missing/unknown classifications will not count as uninjured. Severity distributions will show each injury category's percentage among injured people.
+For each road-user group, tables will report total, known-classification, injured, and missing/unknown counts. Injury proportions will divide fatal, incapacitating, non-incapacitating, and reported-but-not-evident injury records by records with known classifications. Missing/unknown values will not count as uninjured. Severity percentages will be calculated among injured people.
 
-The second comparison will include drivers and passengers linked to passenger cars or SUVs through CRASH_RECORD_ID and VEHICLE_ID in both People and Vehicles. Unmatched records and missing or other vehicle types will be counted separately and excluded.
-
-Tables will show counts and percentages. Bar charts will compare injury proportions across road-user groups and vehicle types; proportional stacked bars will show severity distributions. Missing classifications and unmatched records will accompany results. Findings will not establish causality or overall travel risk.
+The vehicle comparison will include linked drivers and passengers in passenger cars or SUVs; unmatched records and missing/other vehicle types will be counted separately and excluded. Bar charts will compare injury proportions; proportional stacked bars will display severity. Results will not establish causality or overall travel risk.
 
 ## Datasets and Planned Workflow
 
@@ -66,7 +62,7 @@ Cleaning scripts will standardize dates, whitespace, equivalent categories, and 
 
 Accuracy checks will test non-negative integer injury counts and agreement between INJURIES_TOTAL and the sum of fatal, incapacitating, non-incapacitating, and reported-but-not-evident injuries. Completeness checks will measure missing crash identifiers, dates, and injury summaries. Timeliness checks will revalidate 2024 coverage, acknowledging historical revisions. Consistency checks will test identifier uniqueness and agreement between CRASH_DATE and CRASH_MONTH.
 
-Initial checks confirmed unique, non-missing crash IDs and 2024 dates. Missing injury counts will not become zero automatically; unresolved inconsistencies will be flagged.
+Missing injury counts will not become zero automatically; unresolved inconsistencies will be flagged.
 
 ### Vehicles Assessment and Cleaning
 
@@ -124,7 +120,7 @@ A Schema.org Dataset JSON-LD file will record title, purpose, contributors, sour
 | December 4–6 | Test the full workflow on a fresh clone, review documentation, and make final corrections | All |
 | December 7, 2026 | Create final GitHub release and submit final project | Stacy; all review |
 
-This timeline includes time for feedback, revisions, and reproducibility testing. Exact submission times will be confirmed through Canvas.
+Exact submission times will be confirmed through Canvas.
 
 
 ## Constraints
@@ -137,4 +133,4 @@ Without travel-exposure measures, injury proportions cannot represent overall tr
 
 We need instructor confirmation that three complementary datasets from one publisher satisfy the source requirement. Allen will verify reuse terms and acquisition requirements; Zijian will implement and validate the stated injury mappings and missing-value rules.
 
-Unmatched records, full quality assessments, cleaning validation, and fresh-clone workflow testing remain to be addressed. We will verify that joins preserve person counts without duplication, document unresolved issues, and revise methods and the plan following instructor feedback.
+Implementation will investigate unmatched records, complete quality assessments and cleaning validation, and test a fresh clone. We will document unresolved issues and revise the plan following instructor feedback.
