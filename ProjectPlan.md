@@ -52,7 +52,12 @@ The Crashes extract contains only 2024 dates, exceeds 100 records, and has uniqu
 
 ### Cross-Dataset Feasibility
 
-(Netsh: Explain how the datasets complement each other, their shared identifiers, and preliminary evidence that they can be integrated.)
+The three City of Chicago datasets complement each other because they provide different information about the same traffic crashes. The Crashes dataset contains crash dates, locations, road conditions, and injury totals. The Vehicles dataset provides details about the crash units involved, while the People dataset includes drivers, passengers, pedestrians, and injury classifications.
+
+All three datasets share `CRASH_RECORD_ID`, which allows us to connect records belonging to the same crash. Vehicles also contains `CRASH_UNIT_ID` to identify individual units, while People contains `PERSON_ID` to identify individuals. We plan to use `People.VEHICLE_ID` and `Vehicles.CRASH_UNIT_ID` to connect people with specific crash units, after validating this relationship in the data.
+
+Our initial extracts contain 112,057 crash records, 228,318 vehicle/unit records, and 246,702 person records. The Crashes dataset has unique, non-missing crash identifiers and contains records from 2024. These shared identifiers suggest that integration is feasible, although we still need to assess missing values, duplicate records, and matching rates across all three datasets.
+
 
 ### Lifecycle, Acquisition, and Organization
 
@@ -84,7 +89,21 @@ We will examine the Traffic Crashes Vehicles data set to understand the data str
 
 ### Integration and Post-Integration Assessment
 
-(Netsh: Outline the integration approach, join keys, and post-integration checks across the four required quality dimensions.)
+After each team member cleans their assigned dataset, we will integrate the three datasets using Python and Pandas. The main join key will be `CRASH_RECORD_ID`, which connects records from the same crash. When linking people to specific crash units, we will also use `People.VEHICLE_ID` and `Vehicles.CRASH_UNIT_ID`, while checking that the crash identifiers match.
+
+Since a single crash can involve multiple vehicles and people, we will use appropriate one-to-many relationships to avoid incorrectly duplicating records. We plan to create integrated tables at the crash, unit, and person levels so that our analysis can accurately count crashes, vehicles, and injuries.
+
+After integration, we will evaluate the data using the four required quality dimensions:
+
+- **Accuracy:** Check whether linked records contain reasonable values and whether information such as crash dates and injury counts is consistent across datasets.
+- **Completeness:** Identify missing values, unmatched records, and missing identifiers. Calculate the percentage of records successfully matched across datasets.
+- **Timeliness:** Confirm that the integrated data represents crashes occurring in 2024 and document when the data was acquired.
+- **Consistency:** Check for duplicate identifiers, inconsistent formats, and unexpected changes in record counts after merging.
+
+We will compare record counts before and after integration, document matching rates, and investigate any unexpected duplicates or unmatched records. These checks will help determine whether the integration was reasonably successful.
+
+The integration process will be documented in a reproducible Python script with relative file paths. We will also prepare a summary of the integration methods, quality assessment results, and remaining limitations for the final report.
+
 
 ### Automation, Reproducibility, and Ethics
 
@@ -98,7 +117,25 @@ We will also create a machine-readable metadata file in JSON-LD using Schema.org
 
 ## Timeline
 
-(Netsh: Add a table with target date, task description/deliverable, and responsible member. Schedule acquisition, pre-integration assessment, cleaning, integration, post-integration assessment, analysis, run-all verification, metadata, and report review. Course milestones: Project Plan October 12, Status Report November 19, Final Project December 7, 2026. Check exact times in Canvas and allow time for feedback and corrections.)
+| Target Date | Task Description / Deliverable | Responsible Member(s) |
+|---|---|---|
+| October 12, 2026 | Complete and submit ProjectPlan.md and create the project-plan GitHub release | All; Stacy submits |
+| October 13–20 | Review instructor feedback, finalize acquisition scripts, and record SHA-256 checksums | Stacy |
+| October 21–25 | Conduct pre-integration assessments covering accuracy, completeness, timeliness, and consistency | Stacy, Allen, Zijian |
+| October 26–November 2 | Clean individual datasets and document cleaning methods | Stacy, Allen, Zijian |
+| November 3–8 | Integrate cleaned datasets using shared identifiers and create combined datasets | Netsh |
+| November 9–13 | Conduct post-integration quality assessment, check join accuracy, and document results | Netsh |
+| November 14–18 | Perform initial analysis, create visualizations, and prepare status report | Zijian; all contribute |
+| November 19, 2026 | Submit status report and GitHub release | All |
+| November 20–26 | Address feedback and improve integration and analysis | Netsh, Zijian |
+| November 23–30 | Finalize automated workflow, data-use documentation, software license, and reproduction steps | Allen |
+| November 24–December 1 | Complete data dictionary and machine-readable metadata | Stacy |
+| December 1–3 | Compile final README.md with each member's completed report sections | Zijian; all contribute |
+| December 4–6 | Test the full workflow on a fresh clone, review documentation, and make final corrections | All |
+| December 7, 2026 | Create final GitHub release and submit final project | Stacy; all review |
+
+This timeline includes time for feedback, revisions, and reproducibility testing. Exact submission times will be confirmed through Canvas.
+
 
 ## Constraints
 
@@ -106,4 +143,12 @@ We will also create a machine-readable metadata file in JSON-LD using Schema.org
 
 ## Gaps
 
-(Netsh: Identify unresolved questions and needed instructor input, including whether three distinct datasets from one publisher satisfy the source requirement. Coordinate with Allen on reuse terms and automated acquisition, and with Zijian on category definitions and structural missingness. Explain that full quality checks and end-to-end reproduction remain future work and that the plan will be updated after feedback.)
+
+One remaining question is whether using three distinct datasets from the same City of Chicago publisher satisfies the course requirement for multiple data sources. Although the datasets provide different information and share common identifiers, we plan to confirm this with the instructor.
+
+We also need to finalize our research questions and decide how certain variables will be categorized during analysis. We will coordinate with Allen to confirm data reuse terms and automated acquisition requirements. We will also work with Zijian to establish consistent injury categories and determine how to handle missing values, including fields that do not apply to certain types of records.
+
+Another challenge is ensuring that the datasets merge correctly without creating unintended duplicates or losing important records. We still need to verify the relationship between vehicle and person identifiers and assess how many records successfully match.
+
+Finally, full data quality assessments and end-to-end reproducibility testing have not yet been completed. These will be addressed during the implementation process. We will document any issues, update our methods as needed, and revise the project plan based on instructor feedback.
+
