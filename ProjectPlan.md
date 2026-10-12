@@ -34,7 +34,13 @@ For each group, the injury proportion will be calculated as the number of people
 
 ### Planned Analysis Approach
 
-(Zijian: Based on the agreed research questions, describe the planned analysis methods, relevant variables, and visualizations. Explain any definitions or calculations needed to answer the questions.)
+We will conduct a descriptive analysis at the person-record level. We will first use PERSON_TYPE to classify records into four road-user groups: pedestrians, cyclists, drivers, and passengers. For each group, we will report the total number of records, the number with a known injury classification, the number recorded as injured, and the number with a missing or unknown injury classification.
+
+The injury proportion will be calculated as the number of people classified as having a fatal, incapacitating, non-incapacitating, or reported-but-not-evident injury divided by the number of people with a known injury classification. Records with missing or unknown injury classifications will not be treated as uninjured and will be reported separately. Among injured people, we will also calculate the distribution of injury severity to compare the relative frequency of fatal, incapacitating, non-incapacitating, and reported-but-not-evident injuries across the four road-user groups.
+
+To address the second research question, we will restrict the analysis to drivers and passengers whose People records can be linked to Vehicles records. We will use CRASH_RECORD_ID together with People.VEHICLE_ID and Vehicles.CRASH_UNIT_ID to associate each person with a crash unit. We will then compare injury proportions for occupants of vehicles classified as PASSENGER and SPORT UTILITY VEHICLE (SUV).
+
+Results will be presented in summary tables and bar charts. A grouped bar chart will compare injury proportions across pedestrians, cyclists, drivers, and passengers; a proportional stacked bar chart will show injury-severity distributions among injured people; and a separate grouped bar chart will compare passenger-car and SUV occupants. We will display record counts together with percentages and report missing classifications and unmatched vehicle records. The analysis will be descriptive and will not be interpreted as measuring travel risk or establishing causal effects.
 
 ## Datasets and Planned Workflow
 
@@ -48,7 +54,7 @@ The Crashes extract contains only 2024 dates, exceeds 100 records, and has uniqu
 | --- | --- | --- |
 | [Traffic Crashes – Crashes](https://data.cityofchicago.org/Transportation/Traffic-Crashes-Crashes/85ca-t3if) | 112,057 rows; 49 columns | Each row represents a recorded crash. CRASH_RECORD_ID identifies each crash and links it to the Vehicles and People datasets. Relevant fields include CRASH_DATE, WEATHER_CONDITION, LIGHTING_CONDITION, FIRST_CRASH_TYPE, and injury summary fields such as INJURIES_TOTAL. This dataset defines the 2024 crash scope and provides crash-level context. Its injury totals will also be compared with aggregated People records as a consistency check, with any discrepancies investigated and documented.  |
 | [Traffic Crashes – Vehicles](https://data.cityofchicago.org/Transportation/Traffic-Crashes-Vehicles/68nd-jvt3) | 228,318 rows; 71 columns | (Allen: Describe crash-unit records, relevant vehicle fields, CRASH_UNIT_ID, VEHICLE_ID, and CRASH_RECORD_ID. Explain how this dataset contributes information beyond Crashes and People.) |
-| [Traffic Crashes – People](https://data.cityofchicago.org/Transportation/Traffic-Crashes-People/u6pd-qa9d) | 246,702 rows; 29 columns | (Zijian: Describe person records, PERSON_ID, occupant roles, injury classification, and vehicle/crash identifiers. Explain how this dataset supports the research questions.) |
+| [Traffic Crashes – People](https://data.cityofchicago.org/Transportation/Traffic-Crashes-People/u6pd-qa9d) | 246,702 rows; 29 columns |Each row represents one person involved in a recorded crash, including drivers, passengers, pedestrians, and cyclists. PERSON_ID uniquely identifies the person record, CRASH_RECORD_ID links the person to the corresponding crash, and VEHICLE_ID corresponds to CRASH_UNIT_ID in the Vehicles dataset. Relevant fields include PERSON_TYPE, CRASH_DATE, VEHICLE_ID, SEAT_NO, AGE, SEX, SAFETY_EQUIPMENT, and INJURY_CLASSIFICATION. This dataset provides the person-level road-user roles and injury outcomes needed for both research questions. It allows us to compare injury outcomes across pedestrians, cyclists, drivers, and passengers and, after integration with Vehicles, to compare occupants of passenger cars and SUVs.|
 
 ### Cross-Dataset Feasibility
 
@@ -85,8 +91,15 @@ We will examine the Traffic Crashes Vehicles data set to understand the data str
 
 ### People Assessment and Cleaning
 
-(Zijian: Outline quality checks across the four required dimensions and planned cleaning methods based on the agreed research questions.)
+For accuracy, we will verify that CRASH_DATE falls within 2024 and that PERSON_TYPE and INJURY_CLASSIFICATION contain documented or explainable values. We will review the ranges and formats of fields used in the analysis and investigate invalid ages, malformed identifiers, and unexpected injury or road-user categories. After integration, aggregated person-level injury counts will be compared with the injury-summary fields in the Crashes dataset. Differences will be investigated rather than automatically treated as errors because the datasets may be updated at different times.
 
+For completeness, we will calculate missing-value counts and percentages for PERSON_ID, CRASH_RECORD_ID, VEHICLE_ID, PERSON_TYPE, CRASH_DATE, and INJURY_CLASSIFICATION. We will distinguish genuinely missing information from values that are not applicable to a particular type of person. Missing or unknown injury classifications will be reported separately and will not be recoded as no injury.
+
+For timeliness, we will confirm that the extract covers crashes from January 1 through December 31, 2024 and record the acquisition date. Because the source is updated over time and fatalities may be added after the original crash report, we will treat the downloaded files as dated snapshots and document this limitation.
+
+For consistency, we will test whether PERSON_ID is unique, identify exact duplicate records, standardize date and categorical formats, and examine spelling or capitalization differences in PERSON_TYPE and INJURY_CLASSIFICATION. We will also check that each CRASH_RECORD_ID matches a Crashes record and that People.VEHICLE_ID matches Vehicles.CRASH_UNIT_ID within the same crash where a vehicle linkage is expected.
+
+Cleaning will preserve the raw data and create a separate cleaned file. We will parse dates into a consistent format, preserve identifiers as strings, trim unnecessary whitespace, standardize equivalent category labels, and convert documented missing-value codes to a consistent null representation. Duplicate records will be removed only after their identifiers and contents have been investigated. We will create documented derived fields for road-user group, known injury classification, injury status, and injury severity. The cleaning script will record the number of affected records and produce checks that can be rerun as part of the automated workflow.
 ### Integration and Post-Integration Assessment
 
 After each team member cleans their assigned dataset, we will integrate the three datasets using Python and Pandas. The main join key will be `CRASH_RECORD_ID`, which connects records from the same crash. When linking people to specific crash units, we will also use `People.VEHICLE_ID` and `Vehicles.CRASH_UNIT_ID`, while checking that the crash identifiers match.
@@ -139,8 +152,13 @@ This timeline includes time for feedback, revisions, and reproducibility testing
 
 ## Constraints
 
-(Zijian: Describe limitations and challenges based on the agreed research questions and datasets.)
+The analysis is limited to crashes recorded by the Chicago Police Department and included in the City of Chicago data portal. It therefore does not include every crash that occurred, and reporting practices may differ between crashes reported at the scene and those reported later. Injury classifications reflect information recorded by the responding or reporting officer rather than independently verified medical outcomes. Records may also be amended after their initial publication, so results depend on the acquisition date of our data snapshot.
 
+The datasets contain people involved in recorded crashes but do not contain measures of travel exposure, such as the number of trips, travelers, or miles traveled by each transportation mode. Consequently, the calculated proportions describe injury outcomes among people appearing in recorded crashes and cannot be interpreted as the overall risk of walking, cycling, driving, riding in a passenger car, or riding in an SUV.
+
+Missing injury classifications, road-user categories, vehicle identifiers, and vehicle types may reduce the number of records available for some comparisons. Linking the People and Vehicles datasets may also create duplicated person records if the one-to-many relationships are handled incorrectly. We will address this risk by validating identifier relationships, checking row counts before and after each merge, and reporting unmatched records.
+
+The passenger-car and SUV comparison will be descriptive. Differences may reflect crash circumstances, occupant characteristics, vehicle use, reporting patterns, or other factors not controlled for in this project, so we will not make causal claims about vehicle type. Finally, although the three datasets contain distinct and complementary records, they are all published by the City of Chicago. We will confirm with the instructor that this satisfies the requirement for three distinct data sources.
 ## Gaps
 
 
