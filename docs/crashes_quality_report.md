@@ -42,11 +42,11 @@ In addition to null values, categorical fields contained values representing unk
 
 | Column | Category | Records |
 |---|---|---:|
-| `weather_condition` | UNKNOWN | 8,826 |
-| `lighting_condition` | UNKNOWN | 7,093 |
-| `roadway_surface_cond` | UNKNOWN | 14,692 |
-| `traffic_control_device` | UNKNOWN | 7,128 |
-| `prim_contributory_cause` | UNABLE TO DETERMINE | 45,995 |
+| weather_condition | UNKNOWN | 8,826 |
+| lighting_condition | UNKNOWN | 7,093 |
+| roadway_surface_cond | UNKNOWN | 14,692 |
+| traffic_control_device | UNKNOWN | 7,128 |
+| prim_contributory_cause | UNABLE TO DETERMINE | 45,995 |
 
 These categories were retained rather than automatically converted to missing values or replaced with estimated information.
 
@@ -56,13 +56,13 @@ Numeric ranges were examined to identify potentially invalid or unusual values.
 
 | Variable | Minimum | Maximum |
 |---|---:|---:|
-| `posted_speed_limit` | 0 | 70 |
-| `num_units` | 1 | 18 |
-| `injuries_total` | 0 | 15 |
-| `injuries_fatal` | 0 | 2 |
-| `crash_hour` | 0 | 23 |
-| `crash_month` | 1 | 12 |
-| `crash_day_of_week` | 1 | 7 |
+| posted_speed_limit | 0 | 70 |
+| num_units | 1 | 18 |
+| injuries_total | 0 | 15 |
+| injuries_fatal | 0 | 2 |
+| crash_hour | 0 | 23 |
+| crash_month | 1 | 12 |
+| crash_day_of_week | 1 | 7 |
 
 The date-related numeric fields fell within their expected ranges.
 
@@ -132,9 +132,9 @@ Three additional columns were created:
 
 | New Column | Description |
 |---|---|
-| `injury_type_conflict` | Flags crashes classified as `NO INJURY / DRIVE AWAY` with positive total injuries |
-| `notification_delay_hours` | Calculates hours between crash occurrence and police notification |
-| `late_notification` | Flags notification delays exceeding 24 hours |
+| injury_type_conflict | Flags crashes classified as `NO INJURY / DRIVE AWAY` with positive total injuries |
+| notification_delay_hours | Calculates hours between crash occurrence and police notification |
+| late_notification | Flags notification delays exceeding 24 hours |
 
 Missing values, unknown categories, unusual speed limits, and extreme traffic-unit counts were retained because there was insufficient evidence to correct them reliably.
 
