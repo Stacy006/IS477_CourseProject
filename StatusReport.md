@@ -25,13 +25,27 @@ Focus on:
 
 Describe completed and ongoing tasks from the Project Plan. Include specific results and links to GitHub artifacts.
 
+
 ### 2.1 Data Acquisition and Verification — Stacy
 
-[Stacy: Describe the acquisition of all three datasets, 2024 filtering, record counts, checksum verification, and relevant scripts.]
+We used `acquire_data.py` to retrieve three datasets from the Chicago Data Portal, filtered to crashes occurring in 2024: Crashes (112,056 records), Vehicles (228,316 records), and People (246,702 records).
+
+We ran `check_crashes.py` to confirm record counts, column counts, date coverage, and SHA-256 checksums for all three files. We also confirmed that Crashes contained no duplicate `crash_record_id` values. The original files were preserved separately from processed data.
+
+**Artifacts:** [acquire_data.py](acquire_data.py), [check_crashes.py](check_crashes.py)
 
 ### 2.2 Crashes Assessment and Cleaning — Stacy
 
-[Stacy: Describe the four quality dimensions, major findings, cleaning decisions, validation results, and documentation.]
+We assessed the Crashes dataset across four quality dimensions:
+
+- **Completeness:** Several work-zone-related fields had over 99% missing values, while `injuries_total` was missing in 249 records (0.22%).
+- **Accuracy:** We found 194 records with `posted_speed_limit` equal to zero and two crashes involving 16 or 18 traffic units.
+- **Consistency:** Three crashes were classified as `NO INJURY / DRIVE AWAY` despite recording one injury. Checks of injury totals and date components found no mismatches.
+- **Timeliness:** Police notification occurred more than 24 hours after the crash in 10,528 records (9.40%).
+
+Because these findings did not establish which original values were incorrect, we preserved all records and added three fields using `clean_crashes.py`: `injury_type_conflict`, `notification_delay_hours`, and `late_notification`. The processed dataset contains 112,056 records and 52 columns. Validation confirmed three injury-conflict flags and 10,528 late-notification flags.
+
+**Artifacts:** [assess_crashes.py](assess_crashes.py), [clean_crashes.py](clean_crashes.py), [Crashes Quality Report](docs/crashes_quality_report.md)
 
 ### 2.3 Vehicles Assessment and Cleaning — Allen
 
@@ -55,7 +69,11 @@ Describe completed and ongoing tasks from the Project Plan. Include specific res
 
 ### 2.8 Metadata and Data Documentation — Stacy
 
-[Stacy: Report the current status of the data dictionary and Schema.org JSON-LD metadata, including planned completion.]
+We completed `docs/crashes_quality_report.md`, which documents the assessment results, processing decisions, and validation checks.
+
+The data dictionary and Schema.org Dataset JSON-LD metadata are scheduled for November 24–December 1. The dictionary will define fields, identifiers, and missing-value conventions, while the JSON-LD file will describe dataset sources, coverage, and reuse information.
+
+**Artifact:** [Crashes Quality Report](docs/crashes_quality_report.md)
 
 ---
 
@@ -97,9 +115,11 @@ The instructor's feedback on Milestone 2 was generally positive but identified o
 
 ## 5. Challenges, Solutions, and Next Steps
 
-### 5.1 Data Acquisition and Crashes — Stacy
+### 5.1 Challenges and Next Steps — Stacy
 
-[Stacy: Explain issues encountered, actions taken, remaining limitations, and next steps.]
+The main challenge was deciding how to handle incomplete or potentially inconsistent records without changing valid information. For example, work-zone fields may be blank because they do not apply to a crash, while unusual speed limits and conflicting injury classifications cannot be resolved from the available data.
+
+We therefore retained uncertain values and flagged identifiable conflicts instead of making unsupported corrections. Next, we will complete the data dictionary and metadata and check for additional issues during dataset integration.
 
 ### 5.2 Vehicles and Automation — Allen
 
@@ -123,10 +143,9 @@ The instructor's feedback on Milestone 2 was generally positive but identified o
 
 Each member should write and commit their own contribution summary using their GitHub account.
 
-### Stacy
+### 6.1 Individual Contributions — Stacy
 
-[Stacy: Summarize personal contributions and link to relevant artifacts.]
-
+I developed the acquisition and verification scripts, assessed the Crashes dataset, created the quality flags, and validated the processed output. I also documented the findings and committed the scripts and report to GitHub. My remaining responsibilities are compiling the data dictionary, preparing JSON-LD metadata, and coordinating the final release.
 ### Allen
 
 [Allen: Add personal contribution summary.]
