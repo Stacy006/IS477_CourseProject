@@ -48,7 +48,14 @@ Because these findings did not establish which original values were incorrect, w
 **Artifacts:** [assess_crashes.py](assess_crashes.py), [clean_crashes.py](clean_crashes.py), [Crashes Quality Report](docs/crashes_quality_report.md)
 
 ### 2.3 Vehicles Assessment and Cleaning — Allen
+We assessed the Vehicles dataset across four qualities perspective:
+- **Completeness: There are no missing vehicle IDs, crash IDs, or dates. 162 records which is roughly 0.07% had missing UNIT_TYPE, while 6155 had blank VEHCLE_TYPE and 17186(7.53%) were marked UNKNOWN
+- **Accuracy:** Vehicle types are standardized and other variables passed format validation
+-  **Consistency:** There are no duplicaate vehicle IDS, unmatched crash IDs, or conflicitng crash dates were identified
+-  **Timeliness:** The records are within 2024 and all of the dates are valid. The API files had automatically excluded records without date that can be used.
 
+The missing vehicle types can not be inferred accurately. Therefore, we have preserved all records, standardized categories, and separated unresolved values. The cleaned dataset contains 228316 records, classified into 136486 passenger cars, 35781 SUV,, and 56049 other units.
+**Artifacts:** vehicles_2024_cleaned.csv, cars_vs_suvs_2024.csv, quality_summary.csv, and vehicle/unit type frequency reports.
 [Allen: Describe completed quality checks, cleaning methods, results, and relevant artifacts.]
 
 ### 2.4 People Assessment and Cleaning — Zijian
