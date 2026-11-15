@@ -136,7 +136,7 @@ The main challenge was deciding how to handle incomplete or potentially inconsis
 We therefore retained uncertain values and flagged identifiable conflicts instead of making unsupported corrections. Next, we will complete the data dictionary and metadata and check for additional issues during dataset integration.
 
 ### 5.2 Vehicles and Automation — Allen
-
+In the vehicles assessment and cleaning process, the major challenge that are met includes getting large API data, crash ID validation format error, and some vehicle type includes missing values and unknown classification problems. To solve this, we use API pagination and retrieved 228316 vehicle records, fix id validation decision. We have also use data standardization to unify vehicle type's format while we preserve data that classification are unable to be done to reduce effect on future analysis. Moreover, we uses python to build automated workflow, allowing data retrieval, quality assessment, data cleaning, and data export to be done automoatically, reducing manual processing. We will be organizing cleaned vehicle data and ensure workflow reproduciblity. We will also improve documentation and error handling, which can help improve effeciency and relaibility.
 [Allen: Add challenges, solutions, and next steps.]
 
 ### 5.3 People and Analysis — Zijian
@@ -161,7 +161,7 @@ Each member should write and commit their own contribution summary using their G
 
 I developed the acquisition and verification scripts, assessed the Crashes dataset, created the quality flags, and validated the processed output. I also documented the findings and committed the scripts and report to GitHub. My remaining responsibilities are compiling the data dictionary, preparing JSON-LD metadata, and coordinating the final release.
 ### Allen
-
+I am responsible for vehicles dataset's data quality assessment, data cleaning and workflow automation. Through python and Chicago open data, I have built automatic data retrieval and organizing processes, which finished checking on accuracy, completeness, consistency, and timeliness. I have also solve ID validation and vehicle type classification problem. The final result are cleaned dataset and quality reports, which ensure data quality and support team analysis in the future. 
 [Allen: Add personal contribution summary.]
 
 ### Zijian
