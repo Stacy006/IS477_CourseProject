@@ -72,6 +72,13 @@ The missing vehicle types can not be inferred accurately. Therefore, we have pre
 
 ### 2.7 Workflow Automation and Reproducibility — Allen
 
+We have automated the Vehicles data assessment and the cleaning process using Python and the Chicago Open Data. 
+Automation: Python autooatically retrievces 2024 Vehicles and Crashes records through API pagination, performs quality checks, standardizes data, and exports cleaned datasets and reports.
+Dependency Management: The workflow uses libraries such as pandas for data processing and requests for API access. 
+Documentation: The python script contains organized steps for data retrieval, validation, cleaning, and exporting results.
+Remaining Work: Integrate the workflow with other team members datasets, documentation execution instructions, and verify reproducibility across runs
+
+The automated process is successful. 228316 vehicle records and 112056 crash records are retrieved.
 [Allen: Describe automation progress, dependency management, documentation, and remaining work.]
 
 ### 2.8 Metadata and Data Documentation — Stacy
