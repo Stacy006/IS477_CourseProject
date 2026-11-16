@@ -41,7 +41,6 @@ Because these findings did not establish which original values were incorrect, w
 **Artifacts:** [assess_crashes.py](assess_crashes.py), [clean_crashes.py](clean_crashes.py), [Crashes Quality Report](docs/crashes_quality_report.md)
 
 ### 2.3 Vehicles Assessment and Cleaning — Allen
-2.3 Vehicles Assessment and Cleaning — Allen
 
 We assessed the Vehicles dataset across four data quality dimensions:
 
@@ -108,11 +107,11 @@ The data dictionary and Schema.org Dataset JSON-LD metadata are scheduled for No
 | Acquisition and SHA-256 verification | Stacy | Completed | Nov. 3 |
 | Crashes assessment and cleaning | Stacy | Completed | Nov. 3 |
 | Vehicles assessment and cleaning | Allen | Completed | Nov. 15 |
-| People assessment and cleaning | Zijian | Completed; integration follow-up pending | Nov. 15 |
+| People assessment and cleaning | Zijian | Completed; linkage issue resolved | Nov. 15 |
 | Data integration | Netsh | Completed | Nov. 15 |
 | Post-integration assessment | Netsh | Completed; all checks passed | Nov. 15 |
 | Initial analysis and visualizations | Zijian | Injury variables ready; comparisons/charts pending | Nov. 18 target; depends on integration |
-| Workflow automation and reproducibility | Allen | To be updated | Nov. 30 |
+| Workflow automation and reproducibility | Allen | Vehicles automation completed; full workflow verification pending | Nov. 30 |
 | Data dictionary and metadata | Stacy | Planned | Dec. 1 |
 | Final README and documentation | Zijian; all contribute | Planned | Dec. 3 |
 | Final workflow verification | All | Planned | Dec. 6 |
@@ -148,7 +147,7 @@ During the Vehicles assessment and cleaning process, the main challenges include
 
 ### 5.3 People and Analysis — Zijian
 
-Missing injury classifications must not become no injury. Nullable injury fields preserve this distinction. Vehicle metadata also suggested a different identifier; actual matching confirmed the plan's `vehicle_id` linkage. Allen's current export omits this field, so assessment uses raw Vehicles. Next, coordinate its retention and consistent ID formatting with Allen and Netsh, complete comparisons and charts, and contribute field definitions and the final README.
+Missing injury classifications must not be treated as no injury, so nullable injury fields were preserved. Vehicle linkage initially required additional validation because of identifier differences. This issue was resolved after Allen updated the cleaned Vehicles file to retain `vehicle_id`, allowing integration to use the processed data. Next, we will complete the group comparisons and charts, contribute field definitions, and prepare the final README.
 
 ### 5.4 Integration — Netsh
 
@@ -156,7 +155,6 @@ The main challenge was linking Vehicles. Allen's cleaned file first dropped `veh
 
 ### 5.5 Outstanding Issues
 
-- **People/vehicle linkage:** Allen and Netsh need to retain `vehicle_id` and normalize IDs on both sides before integration.
 - **People deliverables:** Zijian's comparisons and charts remain pending. Input and cleaned data snapshots exceed 50 MB; their course-required shared access still needs coordination with Stacy and Allen.
 - **Integrated data:** The integrated file (165 MB) exceeds 50 MB and needs the shared Box link.
 - **Unlinked drivers:** 37 drivers have no `vehicle_id` in the source and are excluded from the vehicle comparison.
