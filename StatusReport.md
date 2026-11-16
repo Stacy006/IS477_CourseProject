@@ -42,24 +42,24 @@ Because these findings did not establish which original values were incorrect, w
 
 ### 2.3 Vehicles Assessment and Cleaning — Allen
 
-We assessed the Vehicles dataset across four data quality dimensions:
+We assessed 228,316 Vehicles records across four data quality dimensions:
 
-- **Completeness:** No missing CRASH_UNIT_ID or CRASH_RECORD_ID values were found. However, 162 records (0.07%) had missing UNIT_TYPE, 6,155 (2.70%) had blank VEHICLE_TYPE and VEHICLE_ID values, and 17,186 (7.53%) had VEHICLE_TYPE marked as UNKNOWN.
-- **Accuracy:** types were standardized, and all crash and unit identifiers passed format validation.
-- **Consistency:** No duplicate CRASH_UNIT_ID values, unmatched crash IDs, or conflicting crash dates were identified.
-- **Timeliness:** All retrieved records had valid dates within 2024. However, the API date filter excluded records with missing or invalid dates.
+- **Completeness:** Some `UNIT_TYPE`, `VEHICLE_TYPE`, and `VEHICLE_ID` values were missing; 17,186 records had `VEHICLE_TYPE` marked as `UNKNOWN`.
+- **Accuracy:** Vehicle types were standardized, and crash and unit identifiers passed format validation.
+- **Consistency:** No duplicate crash-unit IDs, unmatched crash IDs, or conflicting crash dates were found.
+- **Timeliness:** All retrieved records had valid dates within 2024, although the API date filter excluded records with missing or invalid dates.
 
-Since missing vehicle types could not be reliably inferred, we preserved all records, standardized vehicle classifications, and kept unresolved values separate. The cleaned dataset contains 228,316 records, including 136,486 passenger cars, 35,781 SUVs, and 56,049 other or unresolved units.
+We preserved all records and kept unresolved vehicle types separate rather than inferring missing values. The cleaned dataset contains 136,486 passenger cars, 35,781 SUVs, and 56,049 other or unresolved units.
 
 **Artifacts:** [Vehicles Assessment Python Script](vehicle_assessment.py), [Vehicles Quality Report](vehicles_data_quality_report.md)
 
 ### 2.4 People Assessment and Cleaning — Zijian
 
-We assessed all 246,702 People records. Accuracy checks found no unrecognized person/injury categories or unusual identifier formats. Completeness checks found 39 missing injury classifications (0.016%) and 5,986 missing vehicle IDs (2.43%), including 37 drivers. Timeliness checks confirmed valid dates throughout 2024. Consistency checks found no duplicate person IDs; all records matched Crashes, and all 240,716 records with vehicle IDs matched Vehicles using `crash_record_id + vehicle_id`, with no linked-date conflicts.
+We assessed all 246,702 People records. Completeness checks identified 39 missing injury classifications (0.016%) and 5,986 missing `vehicle_id` values (2.43%), including 37 drivers. Accuracy and consistency checks found no invalid identifier formats, duplicate person IDs, or unmatched crash records. All 240,716 records with `vehicle_id` matched Vehicles using `crash_record_id + vehicle_id`. Timeliness checks confirmed valid dates within 2024.
 
-Cleaning standardized identifiers and dates, retained all records, and added injury variables and quality flags. Unknown injuries remain separate from no injury. The output has 49 columns; CSV round-trip validation passed.
+Cleaning standardized identifiers and dates, preserved all records, and added injury variables and quality flags. Missing injury classifications remained distinct from no injury. The cleaned output contains 49 columns and passed CSV validation.
 
-**Artifacts:** [Assessment](assess_people.py), [cleaning](clean_people.py), [quality report](docs/people_quality_report.md), [validation](results/people/validation.csv).
+**Artifacts:** [Assessment](assess_people.py), [Cleaning](clean_people.py), [Quality Report](docs/people_quality_report.md), [Validation](results/people/validation.csv).
 
 ### 2.5 Data Integration and Quality Assessment — Netsh
 
@@ -81,13 +81,9 @@ Injury mappings and denominator rules are implemented: 246,663 records have know
 
 ### 2.7 Workflow Automation and Reproducibility — Allen
 
-We automated the Vehicles data assessment and cleaning process using Python and the City of Chicago Open Data API.
-Automation: Python automatically retrieves 2024 Vehicles and Crashes records through API pagination, performs quality checks, standardizes data, and exports cleaned datasets and reports.
-Dependency Management: The workflow uses pandas for data processing and requests for API access.
-Documentation: The Python script includes clearly organized steps for data retrieval, validation, cleaning, and exporting results.
-Remaining Work: Integrate the workflow with other team members' datasets, document execution instructions, and verify reproducibility across multiple runs.
+We automated Vehicles data retrieval, quality assessment, and cleaning using Python and the Chicago Open Data API. The workflow uses `requests` for API pagination and `pandas` for data processing, validation, and export. It successfully processed 228,316 Vehicles records and 112,056 Crashes records.
 
-The automated workflow successfully processed 228,316 vehicle records and 112,056 crash records, reducing manual data preparation and supporting consistent, reproducible analysis.
+Remaining work includes integrating the workflow with other team members' scripts, documenting execution instructions, and testing reproducibility across multiple runs.
 
 ### 2.8 Metadata and Data Documentation — Stacy
 
@@ -110,14 +106,12 @@ The data dictionary and Schema.org Dataset JSON-LD metadata are scheduled for No
 | People assessment and cleaning | Zijian | Completed; linkage issue resolved | Nov. 15 |
 | Data integration | Netsh | Completed | Nov. 15 |
 | Post-integration assessment | Netsh | Completed; all checks passed | Nov. 15 |
-| Initial analysis and visualizations | Zijian | Injury variables ready; comparisons/charts pending | Nov. 18 target; depends on integration |
+| Initial analysis and visualizations | Zijian | Injury variables ready; comparisons/charts pending | Nov. 18 target|
 | Workflow automation and reproducibility | Allen | Vehicles automation completed; full workflow verification pending | Nov. 30 |
 | Data dictionary and metadata | Stacy | Planned | Dec. 1 |
 | Final README and documentation | Zijian; all contribute | Planned | Dec. 3 |
 | Final workflow verification | All | Planned | Dec. 6 |
 | Final release and submission | Stacy; all review | Planned | Dec. 7 |
-
-[All members: Confirm task statuses and revise dates if needed.]
 
 ---
 
@@ -159,26 +153,22 @@ The main challenge was linking Vehicles. Allen's cleaned file first dropped `veh
 - **Integrated data:** The integrated file (165 MB) exceeds 50 MB and needs the shared Box link.
 - **Unlinked drivers:** 37 drivers have no `vehicle_id` in the source and are excluded from the vehicle comparison.
 
-[Other members: Add remaining issues and planned actions.]
-
 ---
 
 ## 6. Individual Contributions
 
-Each member should write and commit their own contribution summary using their GitHub account.
-
-### 6.1 Individual Contributions — Stacy
+### 6.1 Stacy
 
 I developed the acquisition and verification scripts, assessed the Crashes dataset, created the quality flags, and validated the processed output. I also documented the findings and committed the scripts and report to GitHub. My remaining responsibilities are compiling the data dictionary, preparing JSON-LD metadata, and coordinating the final release.
-### Allen
-I was responsible for the Vehicles dataset's data quality assessment, data cleaning, and workflow automation. Using Python and the Chicago Open Data API, I developed an automated data retrieval and processing workflow to assess accuracy, completeness, consistency, and timeliness. I also resolved ID validation issues and standardized vehicle classifications. The final deliverables include cleaned datasets and quality reports to support the team's subsequent analysis.
-[Allen: Add personal contribution summary.]
 
-### Zijian
+### 6.2 Allen
+I was responsible for the Vehicles dataset's data quality assessment, data cleaning, and workflow automation. Using Python and the Chicago Open Data API, I developed an automated data retrieval and processing workflow to assess accuracy, completeness, consistency, and timeliness. I also resolved ID validation issues and standardized vehicle classifications. The final deliverables include cleaned datasets and quality reports to support the team's subsequent analysis.
+
+### 6.3 Zijian
 
 I am responsible for the People assessment and cleaning scripts, documented injury mappings, and quality reports. This milestone includes full-data checks, CSV validation, and three regression tests. I documented missing classifications and verified vehicle linkage. Remaining work includes comparative analysis, visualizations, People field documentation, and compiling the final README.
 
-### Netsh
+### 6.4 Netsh
 
 I am responsible for integrating the cleaned datasets and assessing the integrated data. I wrote `integrate_data.py`, which joins People to Crashes and Vehicles without dropping or duplicating records, and `assess_integration.py`, which checks accuracy, completeness, timeliness, and consistency and saves the results. I also wrote the integration quality report and switched integration to Allen's cleaned Vehicles file once it kept `vehicle_id`. Remaining work includes sharing the integrated file, adding both scripts to the run-all workflow, and documenting integration fields for the data dictionary.
 
@@ -207,5 +197,4 @@ I am responsible for integrating the cleaned datasets and assessing the integrat
 
 - [Vehicles Assessment Python Script](vehicle_assessment.py)
 - [Vehicles Quality Report](vehicles_data_quality_report.md)
-[Add links to other completed artifacts.]
 
