@@ -1,0 +1,91 @@
+{
+  "python_version": "3.12.14",
+  "pandas_version": "3.0.1",
+  "source": "Chicago Data Portal, fresh 2024 snapshot",
+  "scope": "All People columns and rows; all 2024 Crashes/ Vehicles rows with only reference ID/date columns downloaded for join checks.",
+  "assessed_at_utc": "2026-11-15T19:20:00.677551+00:00",
+  "people_input_rows": 246702,
+  "people_output_rows": 246702,
+  "people_input_columns": 29,
+  "people_output_columns": 49,
+  "input_files": {
+    "people": {
+      "path": "data/raw/people_2024.csv",
+      "sha256": "c9cc385bb1c115d1101d839b3856a0ddbc8a3e2383d2d64da2e5c26e575d309b",
+      "bytes": 76200030
+    },
+    "crashes": {
+      "path": "data/raw/crashes_2024.csv",
+      "sha256": "d3d1a75618b86763863d3b3bf4e33478f2fae8ae6ceab7a9abf74abaef1a0d44",
+      "bytes": 17256652
+    },
+    "vehicles": {
+      "path": "data/raw/vehicles_2024.csv",
+      "sha256": "73324bb246034e6d9a19ba08606aed2c345c4f049fd88288c0db35142140e7d6",
+      "bytes": 38770688
+    }
+  },
+  "known_injury_records": 246663,
+  "injured_records": 25706,
+  "unknown_or_unrecognized_injury_records": 39,
+  "link_checks_before": {
+    "crash": {
+      "reference_rows": 112056,
+      "reference_rows_missing_key": 0,
+      "reference_duplicate_key_rows": 0,
+      "people_link_status_counts": {
+        "MATCHED": 246702
+      }
+    },
+    "vehicle": {
+      "reference_rows": 228316,
+      "reference_rows_missing_key": 6155,
+      "reference_duplicate_key_rows": 0,
+      "people_link_status_counts": {
+        "MATCHED": 240716,
+        "MISSING_KEY": 5986
+      }
+    }
+  },
+  "link_checks_after": {
+    "crash": {
+      "reference_rows": 112056,
+      "reference_rows_missing_key": 0,
+      "reference_duplicate_key_rows": 0,
+      "people_link_status_counts": {
+        "MATCHED": 246702
+      }
+    },
+    "vehicle": {
+      "reference_rows": 228316,
+      "reference_rows_missing_key": 6155,
+      "reference_duplicate_key_rows": 0,
+      "people_link_status_counts": {
+        "MATCHED": 240716,
+        "MISSING_KEY": 5986
+      }
+    }
+  },
+  "output_validation": {
+    "row_count_preserved": true,
+    "all_columns_and_values_survive_csv_roundtrip": true,
+    "identifier_values_and_row_order_preserved": true,
+    "unknown_injuries_remain_blank": true,
+    "unknown_severities_remain_blank": true,
+    "known_injuries_have_boolean_status": true,
+    "source_file_unchanged": true
+  },
+  "regression_tests": {
+    "passed": 3,
+    "coverage": [
+      "Explicit injury mappings and unknown/null preservation; leading-zero IDs; all rows retained; duplicates and invalid dates flagged.",
+      "Composite vehicle_id join, missing keys, ambiguous reference keys, timestamp differences and uppercase normalization.",
+      "Both CLIs, CSV round trip, stable output on rerun, post-clean assessment, missing schema and missing Vehicles.vehicle_id rejection."
+    ]
+  },
+  "limitations": [
+    "Snapshot results may change on later downloads. Byte-level checksums depend on CSV serialization.",
+    "No end-to-end integration/analysis workflow exists yet in the inspected repository; this validation covers the two People scripts.",
+    "Allen's current vehicle output omits vehicle_id; default assessment therefore uses data/raw/vehicles_2024.csv."
+  ]
+}
