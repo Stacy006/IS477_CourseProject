@@ -10,21 +10,14 @@
 
 ## 1. Project Overview
 
-Briefly summarize the project objectives, research questions, datasets, and overall progress.
 
-Focus on:
-- Injury outcomes across pedestrians, cyclists, drivers, and passengers
-- Injury proportions among passenger-car and SUV occupants
-- Progress toward a reproducible data processing and analysis workflow
+This project examines injury patterns in Chicago traffic crashes during 2024 using three datasets from the Chicago Data Portal: Crashes, Vehicles, and People. We aim to compare injury proportions and severity distributions among pedestrians, cyclists, drivers, and passengers. We also compare injury proportions between passenger-car and SUV occupants.
 
-[All members: Review and complete.]
+Our workflow includes data acquisition, quality assessment, cleaning, integration, and analysis. We aim to develop a reproducible process with documented data sources, processing steps, and results.
 
 ---
 
 ## 2. Progress and Deliverables
-
-Describe completed and ongoing tasks from the Project Plan. Include specific results and links to GitHub artifacts.
-
 
 ### 2.1 Data Acquisition and Verification — Stacy
 
@@ -48,15 +41,15 @@ Because these findings did not establish which original values were incorrect, w
 **Artifacts:** [assess_crashes.py](assess_crashes.py), [clean_crashes.py](clean_crashes.py), [Crashes Quality Report](docs/crashes_quality_report.md)
 
 ### 2.3 Vehicles Assessment and Cleaning — Allen
-We assessed the Vehicles dataset across four qualities perspective:
-- **Completeness: There are no missing vehicle IDs, crash IDs, or dates. 162 records which is roughly 0.07% had missing UNIT_TYPE, while 6155 had blank VEHCLE_TYPE and 17186(7.53%) were marked UNKNOWN
+We assessed the Vehicles dataset across four data quality dimensions:
+- **Completeness**: There are no missing vehicle IDs, crash IDs, or dates. 162 records which is roughly 0.07% had missing UNIT_TYPE, while 6155 had blank VEHICLE_TYPE and 17186(7.53%) were marked UNKNOWN
 - **Accuracy:** Vehicle types are standardized and other variables passed format validation
--  **Consistency:** There are no duplicaate vehicle IDS, unmatched crash IDs, or conflicitng crash dates were identified
+-  **Consistency:** There are no duplicate vehicle IDS, unmatched crash IDs, or conflicting crash dates were identified
 -  **Timeliness:** The records are within 2024 and all of the dates are valid. The API files had automatically excluded records without date that can be used.
 
-The missing vehicle types can not be inferred accurately. Therefore, we have preserved all records, standardized categories, and separated unresolved values. The cleaned dataset contains 228316 records, classified into 136486 passenger cars, 35781 SUV,, and 56049 other units.
+The missing vehicle types can not be inferred accurately. Therefore, we have preserved all records, standardized categories, and separated unresolved values. The cleaned dataset contains 228,316 records, classified into 136,486 passenger cars, 35,781 SUV, and 56,049 other units.
+
 **Artifacts:** vehicles_2024_cleaned.csv, cars_vs_suvs_2024.csv, quality_summary.csv, and vehicle/unit type frequency reports.
-[Allen: Describe completed quality checks, cleaning methods, results, and relevant artifacts.]
 
 ### 2.4 People Assessment and Cleaning — Zijian
 
@@ -73,13 +66,12 @@ The missing vehicle types can not be inferred accurately. Therefore, we have pre
 ### 2.7 Workflow Automation and Reproducibility — Allen
 
 We have automated the Vehicles data assessment and the cleaning process using Python and the Chicago Open Data. 
-Automation: Python autooatically retrievces 2024 Vehicles and Crashes records through API pagination, performs quality checks, standardizes data, and exports cleaned datasets and reports.
+Automation: Python automatically retrievces 2024 Vehicles and Crashes records through API pagination, performs quality checks, standardizes data, and exports cleaned datasets and reports.
 Dependency Management: The workflow uses libraries such as pandas for data processing and requests for API access. 
 Documentation: The python script contains organized steps for data retrieval, validation, cleaning, and exporting results.
 Remaining Work: Integrate the workflow with other team members datasets, documentation execution instructions, and verify reproducibility across runs
 
 The automated process is successful. 228316 vehicle records and 112056 crash records are retrieved.
-[Allen: Describe automation progress, dependency management, documentation, and remaining work.]
 
 ### 2.8 Metadata and Data Documentation — Stacy
 
@@ -96,9 +88,9 @@ The data dictionary and Schema.org Dataset JSON-LD metadata are scheduled for No
 | Task | Responsible Member(s) | Current Status | Expected Completion |
 |---|---|---|---|
 | Project Plan and initial release | All | Completed | Oct. 12 |
-| Acquisition and SHA-256 verification | Stacy | Completed | Completed |
-| Crashes assessment and cleaning | Stacy | Completed | Completed |
-| Vehicles assessment and cleaning | Allen | To be updated | TBD |
+| Acquisition and SHA-256 verification | Stacy | Completed | Nov. 3 |
+| Crashes assessment and cleaning | Stacy | Completed | Nov. 3 |
+| Vehicles assessment and cleaning | Allen | Completed | Nov. 15 |
 | People assessment and cleaning | Zijian | To be updated | TBD |
 | Data integration | Netsh | To be updated | TBD |
 | Post-integration assessment | Netsh | To be updated | TBD |
@@ -117,13 +109,12 @@ The data dictionary and Schema.org Dataset JSON-LD metadata are scheduled for No
 
 ### 4.1 Changes Based on Instructor Feedback
 
-The instructor's feedback on Milestone 2 was generally positive but identified opportunities to improve clarity and relevance in the writing.
-
-[All members: Explain how the current report uses more specific descriptions of methods, results, and deliverables.]
+In response to the instructor's feedback, we made our progress descriptions more specific by identifying the methods used, the results obtained, and the remaining tasks. We also distinguished completed work from planned activities to communicate the project's current status more clearly.
 
 ### 4.2 Changes to Methods, Scope, or Timeline
 
-[All members: Document any actual changes to the original plan, explain why they were necessary, and identify their effects. If no major changes occurred, state that clearly.]
+The research questions and overall approach remain unchanged. The current data extracts contain 112,056 Crashes records and 228,316 Vehicles records, compared with 112,057 and 228,318 in the initial extracts documented in the Project Plan. The People dataset remains at 246,702 records. We recorded the current counts and SHA-256 checksums to document the files used in this stage. The reason for the small differences has not been determined.
+The interim report deadline was also updated from November 19 to November 16 to match the date listed in Canvas.
 
 ---
 
@@ -133,11 +124,10 @@ The instructor's feedback on Milestone 2 was generally positive but identified o
 
 The main challenge was deciding how to handle incomplete or potentially inconsistent records without changing valid information. For example, work-zone fields may be blank because they do not apply to a crash, while unusual speed limits and conflicting injury classifications cannot be resolved from the available data.
 
-We therefore retained uncertain values and flagged identifiable conflicts instead of making unsupported corrections. Next, we will complete the data dictionary and metadata and check for additional issues during dataset integration.
+We therefore retained uncertain values and flagged identifiable conflicts instead of making unsupported corrections. My next tasks are to compile the data dictionary and prepare the JSON-LD metadata. The Crashes assessment results will also support the team's subsequent integration checks.
 
 ### 5.2 Vehicles and Automation — Allen
 In the vehicles assessment and cleaning process, the major challenge that are met includes getting large API data, crash ID validation format error, and some vehicle type includes missing values and unknown classification problems. To solve this, we use API pagination and retrieved 228316 vehicle records, fix id validation decision. We have also use data standardization to unify vehicle type's format while we preserve data that classification are unable to be done to reduce effect on future analysis. Moreover, we uses python to build automated workflow, allowing data retrieval, quality assessment, data cleaning, and data export to be done automoatically, reducing manual processing. We will be organizing cleaned vehicle data and ensure workflow reproduciblity. We will also improve documentation and error handling, which can help improve effeciency and relaibility.
-[Allen: Add challenges, solutions, and next steps.]
 
 ### 5.3 People and Analysis — Zijian
 
