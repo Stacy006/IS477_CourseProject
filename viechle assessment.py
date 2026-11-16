@@ -32,7 +32,7 @@ def download(dataset, columns, sort_by):
     return pd.DataFrame(rows, columns=columns).fillna("").astype(str)
 
 
-cols = ["crash_unit_id", "crash_record_id", "unit_no", "crash_date", "unit_type", "vehicle_type"]
+cols = ["crash_unit_id", "crash_record_id", "unit_no", "crash_date", "unit_type", "vehicle_type", "vehicle_id"]
 v = download("68nd-jvt3", cols, "crash_unit_id")
 c = download("85ca-t3if", ["crash_record_id", "crash_date"], "crash_record_id")
 if v.empty or c.empty:
