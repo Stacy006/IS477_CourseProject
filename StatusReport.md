@@ -64,7 +64,16 @@ Cleaning standardized identifiers and dates, retained all records, and added inj
 
 ### 2.5 Data Integration and Quality Assessment — Netsh
 
-[Netsh: Describe integration progress, join keys, validation results, unresolved matching issues, and relevant artifacts.]
+We used `integrate_data.py` to left-join cleaned People (246,702 records) to Crashes on `crash_record_id` and to Vehicles on `crash_record_id + vehicle_id`, using only Vehicles records with a `vehicle_id`. We checked that join keys were unique and row counts unchanged, so every People record appears once. IDs were uppercased on all sides first, because Crashes and Vehicles store them in lowercase. Allen's cleaned file omits `vehicle_id`, so we joined raw Vehicles using his vehicle-type rule; his categories matched for all 228,316 units. `assess_integration.py` then checked the result:
+
+- **Accuracy:** Linked crash dates agreed for every record. Person-level injury counts matched `injuries_total` and each severity field for all 111,807 crashes with injury data. The other 249 crashes have no People records.
+- **Completeness:** All People matched Crashes, and 240,716 matched Vehicles; no record with a `vehicle_id` failed to match. 5,940 pedestrians, cyclists, and non-motor-vehicle records have no vehicle by design. 37 drivers and 9 non-contact-vehicle records lack a `vehicle_id` in the source.
+- **Timeliness:** All dates fall in 2024. We downloaded the data on Nov. 15, 2026. People was last updated one day before Crashes and Vehicles, with no effect on links.
+- **Consistency:** Person, crash, unit, and crash–vehicle IDs are unique, with no unusual formats. Row counts did not change after either join.
+
+The integrated dataset has 246,702 records and 74 columns. For RQ2, 147,010 linked drivers and passengers were in passenger cars and 40,093 in SUVs. We excluded 53,595 in other or unknown vehicle types and 37 without a vehicle link. All eight validation checks passed.
+
+**Artifacts:** [integration](integrate_data.py), [assessment](assess_integration.py), [quality report](docs/integration_quality_report.md), [validation](results/integration/validation.csv).
 
 ### 2.6 Initial Analysis and Visualizations — Zijian
 
@@ -101,8 +110,8 @@ The data dictionary and Schema.org Dataset JSON-LD metadata are scheduled for No
 | Crashes assessment and cleaning | Stacy | Completed | Nov. 3 |
 | Vehicles assessment and cleaning | Allen | Completed | Nov. 15 |
 | People assessment and cleaning | Zijian | Completed; integration follow-up pending | Nov. 15 |
-| Data integration | Netsh | To be updated | TBD |
-| Post-integration assessment | Netsh | To be updated | TBD |
+| Data integration | Netsh | Completed | Nov. 15 |
+| Post-integration assessment | Netsh | Completed; all checks passed | Nov. 15 |
 | Initial analysis and visualizations | Zijian | Injury variables ready; comparisons/charts pending | Nov. 18 target; depends on integration |
 | Workflow automation and reproducibility | Allen | To be updated | Nov. 30 |
 | Data dictionary and metadata | Stacy | Planned | Dec. 1 |
@@ -144,12 +153,15 @@ Missing injury classifications must not become no injury. Nullable injury fields
 
 ### 5.4 Integration — Netsh
 
-[Netsh: Add challenges, solutions, and next steps.]
+The main challenge was linking Vehicles. Allen's cleaned file drops `vehicle_id`, and Crashes and Vehicles store IDs in lowercase while cleaned People uses uppercase, so a direct join would match nothing. We uppercased IDs on all sides and joined raw Vehicles using Allen's vehicle-type rule, then confirmed his categories matched for every unit. We asked Allen to keep `vehicle_id` in his cleaned file and will switch to it once updated. We kept and labeled the 46 People records without a `vehicle_id` instead of dropping them. Next, I will share the 165 MB integrated file through Box, support Zijian's vehicle comparison, and add both scripts to the run-all workflow.
 
 ### 5.5 Outstanding Issues
 
 - **People/vehicle linkage:** Allen and Netsh need to retain `vehicle_id` and normalize IDs on both sides before integration.
 - **People deliverables:** Zijian's comparisons and charts remain pending. Input and cleaned data snapshots exceed 50 MB; their course-required shared access still needs coordination with Stacy and Allen.
+- **Vehicles export:** `integrate_data.py` currently uses raw Vehicles with Allen's type rule. Allen's cleaned file needs `vehicle_id` to replace it.
+- **Integrated data:** The integrated file (165 MB) exceeds 50 MB and needs the shared Box link.
+- **Unlinked drivers:** 37 drivers have no `vehicle_id` in the source and are excluded from the vehicle comparison.
 
 [Other members: Add remaining issues and planned actions.]
 
@@ -172,7 +184,7 @@ I am responsible for the People assessment and cleaning scripts, documented inju
 
 ### Netsh
 
-[Netsh: Add personal contribution summary.]
+I am responsible for integrating the cleaned datasets and assessing the integrated data. I wrote `integrate_data.py`, which joins People to Crashes and Vehicles without dropping or duplicating records, and `assess_integration.py`, which checks accuracy, completeness, timeliness, and consistency and saves the results. I also wrote the integration quality report. Remaining work includes switching to Allen's Vehicles file once it keeps `vehicle_id`, sharing the integrated file, adding both scripts to the run-all workflow, and documenting integration fields for the data dictionary.
 
 ---
 
@@ -191,5 +203,10 @@ I am responsible for the People assessment and cleaning scripts, documented inju
 - [People Assessment and Validation Results](results/people/verification_summary.json)
 - [People Regression Tests](tests/test_people.py)
 
+- [Integration Script](integrate_data.py)
+- [Post-Integration Assessment Script](assess_integration.py)
+- [Integration Quality Report and Run Instructions](docs/integration_quality_report.md)
+- [Integration Assessment Summary](results/integration/summary.csv)
+- [Integration Validation Results](results/integration/validation.csv)
 [Add links to other completed artifacts.]
 
