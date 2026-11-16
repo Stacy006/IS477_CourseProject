@@ -2,141 +2,166 @@
 
 ## 1. Dataset Overview
 
-This report documents the data quality assessment, cleaning decisions, and validation results for the **2024 Chicago Traffic Crashes – Vehicles** dataset. The Vehicles data was cross-checked against the corresponding **Traffic Crashes – Crashes** dataset.
+This report documents the data quality assessment, cleaning decisions, and validation results for the **2024 Chicago Traffic Crashes – Vehicles** dataset. The Vehicles records were cross-checked against the **Traffic Crashes – Crashes** dataset.
 
 | Item | Details |
-|---|---|
-| Source | [City of Chicago Data Portal](https://data.cityofchicago.org/Transportation/Traffic-Crashes-Vehicles/68nd-jvt3/about_data) |
+| --- | --- |
+| Source | [City of Chicago Data Portal – Vehicles](https://data.cityofchicago.org/Transportation/Traffic-Crashes-Vehicles/68nd-jvt3/about_data) |
 | Primary dataset | Traffic Crashes – Vehicles (`68nd-jvt3`) |
 | Cross-reference dataset | Traffic Crashes – Crashes (`85ca-t3if`) |
 | Time period | January 1 – December 31, 2024 |
-| Vehicle/unit records retrieved | 228,316 |
-| Crash records retrieved | 112,056 |
-| Vehicle columns selected from API | 7: `crash_unit_id`, `vehicle_id`, `crash_record_id`, `unit_no`, `crash_date`, `unit_type`, `vehicle_type` |
+| Vehicle/unit records retrieved | **228,316** |
+| Crash records retrieved | **112,056** |
+| Vehicle fields selected from API | 7: `crash_unit_id`, `vehicle_id`, `crash_record_id`, `unit_no`, `crash_date`, `unit_type`, `vehicle_type` |
 | Main unit identifier | `crash_unit_id` |
+| Vehicle identifier assessed for linkage | `vehicle_id` |
 | Link to Crashes | `crash_record_id` |
 
-The assessment covered four data quality dimensions: **completeness, accuracy, consistency, and timeliness**. Records were retrieved automatically using Python, the Chicago Open Data API, and pagination in batches of 10,000.
+Python and the Chicago Open Data API were used to retrieve records in batches of 10,000. The assessment covered **completeness, accuracy, consistency, and timeliness**.
 
 ## 2. Data Quality Assessment
 
 ### 2.1 Completeness
 
-Blank values and explicit `UNKNOWN` or `N/A` categories were counted separately for the selected fields.
+Blank values were assessed separately from explicit `UNKNOWN` and `N/A` categories.
 
-| Field / condition | Records | Percentage of 228,316 |
-|---|---:|---:|
-| Missing `crash_unit_id` | 0 | 0.00% |
-| Missing `crash_record_id` | 0 | 0.00% |
-| Missing `unit_no` | 0 | 0.00% |
-| Missing `crash_date` in the extracted records | 0 | 0.00% |
-| Missing `unit_type` | 162 | 0.07% |
+| Field or condition | Records | Percentage of 228,316 |
+| --- | ---: | ---: |
+| Blank `crash_unit_id` | 0 | 0.00% |
+| Blank `crash_record_id` | 0 | 0.00% |
+| Blank `unit_no` | 0 | 0.00% |
+| Blank `crash_date` in the extracted records | 0 | 0.00% |
+| Blank `unit_type` | 162 | 0.07% |
 | Blank `vehicle_type` | 6,155 | 2.70% |
-| `vehicle_type` reported as `UNKNOWN` | 17,186 | 7.53% |
-| Blank `vehicle_id` | 6,155 | 2.70% |
+| `vehicle_type` = `UNKNOWN` | 17,186 | 7.53% |
+| Blank `vehicle_id` | **6,155** | **2.70%** |
 
-The missing `vehicle_id` values were distinguished from `crash_unit_id`: every retrieved record had a `crash_unit_id`, but **6,155 records had a blank `vehicle_id`**. Blank and unknown vehicle types were not automatically filled because their correct values could not be reliably inferred.
+All records contained a `crash_unit_id`, but **6,155 records lacked a `vehicle_id`**. A follow-up check grouped these missing IDs by `unit_type`:
 
-The cleaning classifications further distinguished **5,940 not-applicable** vehicle-type records (primarily non-vehicle unit categories) from **215 remaining missing** vehicle-type records. The API's date-based extraction means the zero missing-date count does **not** measure date completeness across the entire source portal.
+| `unit_type` for records with blank `vehicle_id` | Records |
+| --- | ---: |
+| `PEDESTRIAN` | 3,345 |
+| `BICYCLE` | 2,349 |
+| `NON-MOTOR VEHICLE` | 246 |
+| Blank `unit_type` | 161 |
+| `DRIVER` | 37 |
+| `NON-CONTACT VEHICLE` | 9 |
+| `DRIVERLESS` | 3 |
+| `PARKED` | 3 |
+| `DISABLED VEHICLE` | 1 |
+| `EQUESTRIAN` | 1 |
+| **Total** | **6,155** |
+
+Of the missing IDs, **5,940 (96.51%)** were associated with pedestrian, bicycle, or other non-motor-vehicle units, where a vehicle identifier may not apply. The remaining **215 (3.49%)** were flagged for further review; their missing IDs cannot be assumed to be errors without additional evidence.
+
+Separately, the vehicle-type classification distinguished **5,940 `NOT_APPLICABLE`** cases from **215 `MISSING`** cases. Missing and unknown values were retained rather than filled with guesses.
 
 ### 2.2 Accuracy
 
-Identifier formats were examined using checks for numeric `crash_unit_id` values and the expected hexadecimal format of `crash_record_id`. Category frequency distributions were also generated for `unit_type` and `vehicle_type`.
+Identifiers were checked for expected formats, and frequency distributions were produced for `unit_type` and `vehicle_type`.
 
 | Check | Result |
-|---|---:|
+| --- | ---: |
 | Invalid nonblank `crash_unit_id` formats | 0 |
 | Invalid nonblank `crash_record_id` formats | 0 |
-| Invalid parsed dates within the extract | 0 |
+| **Invalid nonblank `vehicle_id` formats** | **0** |
+| Invalid parsed dates in the selected extract | 0 |
 
-These checks found no format violations in the selected fields. They do not independently verify whether a reported vehicle type is factually correct. `vehicle_id` was assessed for missingness but was not separately tested for format or uniqueness in the reported results.
+All **222,161 nonblank `vehicle_id` values** passed the numeric-format check. Format validation establishes structural validity; it cannot independently confirm that identifiers or vehicle classifications were recorded correctly at the scene.
 
 ### 2.3 Consistency
 
-Consistency checks tested uniqueness of unit identifiers and relationships between the Vehicles and Crashes datasets.
+The assessment checked identifier uniqueness, crash–vehicle key uniqueness, and links between Vehicles and Crashes.
 
 | Check | Result |
-|---|---:|
-| Rows with duplicate `crash_unit_id` values | 0 |
-| Rows with duplicate crash–unit ID pairs | 0 |
-| Duplicate `crash_record_id` values in the Crashes extract | 0 |
-| Vehicle records with unmatched `crash_record_id` values | 0 |
+| --- | ---: |
+| Duplicate `crash_unit_id` values | 0 |
+| Duplicate crash–unit ID pairs | 0 |
+| **Duplicate (`crash_record_id`, `vehicle_id`) pairs among nonblank `vehicle_id` records** | **0** |
+| Duplicate crash IDs in the Crashes extract | 0 |
+| Vehicle records with unmatched `crash_record_id` | 0 |
 | Vehicle records with conflicting linked crash dates | 0 |
 
-All **228,316** vehicle/unit records matched a crash record in the 2024 Crashes extract. Repeated `crash_record_id` values in the Vehicles dataset were treated as expected because multiple units can be involved in the same crash.
+All **228,316** retrieved Vehicles records matched a crash in the Crashes extract. Repeated `crash_record_id` values across different units are expected because a crash can involve multiple units.
+
+The **0 duplicate crash–vehicle pairs** result applies only to records with a nonblank `vehicle_id`, consistent with the project's planned vehicle-level join requirements.
 
 ### 2.4 Timeliness
 
-The script checked whether the retrieved crash dates could be parsed and belonged to 2024.
-
 | Check | Result |
-|---|---:|
-| Invalid dates in selected records | 0 |
+| --- | ---: |
+| Invalid dates among retrieved records | 0 |
 | Dates outside 2024 | 0 |
 
-The API query was restricted to crash dates from **January 1 through December 31, 2024**. As a result, the assessment confirms date validity for the retrieved records only; records without usable dates were excluded by the query rather than measured. A monthly record-count file was created to support review of the distribution across 2024. This was a coverage check, not a measurement of reporting or publication delay.
+All retrieved records had valid crash dates within 2024. However, the API request **filtered by 2024 `crash_date` before extraction**. Thus, this check does not measure how many undated records exist in the full source dataset. Monthly counts were exported for a distribution review; reporting and publication delays were not assessed.
 
 ## 3. Data Cleaning
 
-The cleaning process aimed to standardize selected fields without inventing missing information. Whitespace was removed from selected text fields, and `crash_record_id`, `unit_type`, and `vehicle_type` were standardized to uppercase. Blank, `UNKNOWN`, and not-applicable classifications were kept distinct.
+The workflow standardized whitespace and selected categorical text, including capitalization, while avoiding unsupported replacements for missing or unknown data. The retrieved records were retained in the full cleaned output.
 
-The script added quality and analysis fields including `date_parsed`, `duplicate_unit`, `duplicate_pair`, `crash_link`, `type_status`, and `vehicle_group`.
+Additional processing fields included `date_parsed`, `duplicate_unit`, `duplicate_pair`, `crash_link`, `type_status`, and `vehicle_group`.
 
-**Vehicle-type status after classification:**
+The **6,155 blank `vehicle_id` values were preserved**. The follow-up assessment identified their distribution by unit type but did not manufacture substitute IDs or delete those rows. Records missing `vehicle_id` should be omitted only from joins that require that key, while remaining in the full Vehicles dataset.
 
-| Status | Records |
-|---|---:|
+**Vehicle-type classification:**
+
+| `type_status` | Records |
+| --- | ---: |
 | `REPORTED` | 204,975 |
 | `UNKNOWN` | 17,186 |
 | `NOT_APPLICABLE` | 5,940 |
 | `MISSING` | 215 |
 | **Total** | **228,316** |
 
-**Groups for subsequent analysis:**
+**Vehicle groups for the planned comparison:**
 
-| Vehicle group | Records | Percentage |
-|---|---:|---:|
+| `vehicle_group` | Records | Percentage |
+| --- | ---: | ---: |
 | `PASSENGER_CAR` | 136,486 | 59.78% |
 | `SUV` | 35,781 | 15.67% |
 | `OTHER_OR_UNRESOLVED` | 56,049 | 24.55% |
 | **Total** | **228,316** | **100.00%** |
 
-The `OTHER_OR_UNRESOLVED` group includes legitimate vehicle types outside the passenger-car/SUV comparison as well as unresolved classifications. All **228,316 retrieved rows** were retained in the cleaned file. A separate passenger-car/SUV dataset was exported for focused analysis. Its expected size is **172,267** records based on the reported category counts and successful quality checks; its saved row count should be confirmed directly.
+The `OTHER_OR_UNRESOLVED` group includes both legitimate other vehicle categories and unresolved classifications. A separate passenger-car/SUV analysis file was exported. Its **expected** record count is **172,267** (136,486 passenger cars + 35,781 SUVs), pending a direct check of the saved file.
 
 ## 4. Post-Cleaning Validation
 
-The script's execution summary confirmed the following checks before export:
+The latest script output confirmed these **in-memory checks before export**:
 
 | Validation check | Result |
-|---|---:|
+| --- | ---: |
 | Vehicle/unit rows assessed | 228,316 |
-| Invalid nonblank unit and crash ID formats | 0 |
-| Duplicate unit IDs | 0 |
+| Nonblank `vehicle_id` values | 222,161 |
+| Blank `vehicle_id` values | 6,155 |
+| Invalid nonblank `vehicle_id` formats | 0 |
+| Duplicate nonblank crash–vehicle ID pairs | 0 |
+| Duplicate `crash_unit_id` values | 0 |
 | Unmatched crash IDs | 0 |
 | Conflicting linked crash dates | 0 |
-| Total of all vehicle groups | 228,316 |
-| Total of all type-status categories | 228,316 |
+| Sum of vehicle-group counts | 228,316 |
+| Sum of vehicle-type-status counts | 228,316 |
 
-The script wrote the cleaned data and summary files to `data/processed/`. **A separate reload-and-recount validation of the saved CSV files was not shown in the supplied execution output** and remains a recommended final check.
+The CSV outputs were saved to `data/processed/`. **A separate post-export reload-and-recount validation has not yet been demonstrated**, so the stored files and passenger-car/SUV row count should be confirmed before final submission.
+
+The additional `vehicle_id` format and uniqueness checks appeared in the console output. **They should also be added to `quality_summary.csv`** if that file is intended to be a complete record of all quality checks.
 
 ## 5. Output Files
 
 | Artifact | Purpose |
-|---|---|
-| Python assessment script (use actual repository filename) | API retrieval, assessment, cleaning, and export |
-| `data/processed/vehicles_2024_cleaned.csv` | All 228,316 retrieved records with standardized values and added indicators |
-| `data/processed/cars_vs_suvs_2024.csv` | Passenger-car/SUV comparison subset |
-| `data/processed/quality_summary.csv` | Counts produced by the quality checks |
-| `data/processed/vehicle_type_counts.csv` | Reported vehicle-type frequencies |
-| `data/processed/unit_type_counts.csv` | Reported unit-type frequencies |
-| `data/processed/monthly_counts.csv` | 2024 monthly record-count distribution |
+| --- | --- |
+| Python assessment script (use the actual filename in your repository) | API retrieval, data assessment, cleaning, and exports |
+| `data/processed/vehicles_2024_cleaned.csv` | All selected Vehicles records, including the `vehicle_id` field |
+| `data/processed/cars_vs_suvs_2024.csv` | Passenger-car/SUV analysis subset |
+| `data/processed/quality_summary.csv` | Automated assessment counts; add the new ID checks to keep it complete |
+| `data/processed/vehicle_type_counts.csv` | Vehicle-type frequency distribution |
+| `data/processed/unit_type_counts.csv` | Unit-type frequency distribution |
+| `data/processed/monthly_counts.csv` | Monthly record distribution for 2024 |
 
-The workflow used **Python**, `pandas`, and `requests`. It retrieved records directly from the API; it did not require a separate manually downloaded raw CSV file.
+The workflow uses **Python**, `pandas`, and `requests`. The data was retrieved directly from the API rather than a manually downloaded CSV file.
 
 ## 6. Limitations and Next Steps
 
-The assessment was limited to **seven selected vehicle fields**, not every field available in the Chicago Vehicles dataset. The extraction filter also prevented evaluation of source records with missing or unusable crash dates. Identifier-format checks establish structural validity rather than independent factual accuracy.
+The assessment covered **seven selected Vehicles fields**, not all fields offered by the source. The API date filter excludes undated records from the extract, and format checks cannot establish the factual accuracy of recorded identifiers or classifications.
 
-Missing or unknown vehicle types and blank `vehicle_id` values were retained because there was insufficient evidence to infer replacements. The vehicle-group rules should be reviewed against the frequency reports before drawing conclusions from the car/SUV comparison.
+Most missing `vehicle_id` values occurred among non-motor-vehicle units, but **215 cases still warrant review**. Missing identifiers and unknown vehicle types were preserved rather than inferred. The passenger-car/SUV mapping should be reviewed against the exported category frequency tables.
 
-Next steps include **reloading exported CSVs to verify their row counts and columns**, confirming the car/SUV subset size, integrating the cleaned Vehicles dataset with the team's Crashes and People work, and improving run instructions and error handling for reproducibility. Since the public dataset can change, reproducible snapshots should also record the extraction date or preserve the downloaded source extract.
