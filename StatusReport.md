@@ -53,7 +53,11 @@ The missing vehicle types can not be inferred accurately. Therefore, we have pre
 
 ### 2.4 People Assessment and Cleaning — Zijian
 
-[Zijian: Describe completed quality checks, cleaning methods, results, and relevant artifacts.]
+We assessed all 246,702 People records. Accuracy checks found no unrecognized person/injury categories or unusual identifier formats. Completeness checks found 39 missing injury classifications (0.016%) and 5,986 missing vehicle IDs (2.43%), including 37 drivers. Timeliness checks confirmed valid dates throughout 2024. Consistency checks found no duplicate person IDs; all records matched Crashes, and all 240,716 records with vehicle IDs matched Vehicles using `crash_record_id + vehicle_id`, with no linked-date conflicts.
+
+Cleaning standardized identifiers and dates, retained all records, and added injury variables and quality flags. Unknown injuries remain separate from no injury. The output has 49 columns; CSV round-trip validation passed.
+
+**Artifacts:** [Assessment](assess_people.py), [cleaning](clean_people.py), [quality report](docs/people_quality_report.md), [validation](results/people/validation.csv).
 
 ### 2.5 Data Integration and Quality Assessment — Netsh
 
@@ -61,7 +65,9 @@ The missing vehicle types can not be inferred accurately. Therefore, we have pre
 
 ### 2.6 Initial Analysis and Visualizations — Zijian
 
-[Zijian: Describe analysis progress, preliminary results, charts, and relevant artifacts.]
+Injury mappings and denominator rules are implemented: 246,663 records have known classifications, including 25,706 injured people. These are preparation counts across the full People dataset, not completed research-question comparisons. Group comparisons, severity charts, and passenger-car/SUV analysis remain pending. Next, we will produce group tables and charts and use Netsh's validated integrated output for vehicle comparisons.
+
+**Artifact:** [Classification counts](results/people/injury_classification_counts.csv).
 
 ### 2.7 Workflow Automation and Reproducibility — Allen
 
@@ -91,10 +97,10 @@ The data dictionary and Schema.org Dataset JSON-LD metadata are scheduled for No
 | Acquisition and SHA-256 verification | Stacy | Completed | Nov. 3 |
 | Crashes assessment and cleaning | Stacy | Completed | Nov. 3 |
 | Vehicles assessment and cleaning | Allen | Completed | Nov. 15 |
-| People assessment and cleaning | Zijian | To be updated | TBD |
+| People assessment and cleaning | Zijian | Completed; integration follow-up pending | Nov. 15 |
 | Data integration | Netsh | To be updated | TBD |
 | Post-integration assessment | Netsh | To be updated | TBD |
-| Initial analysis and visualizations | Zijian | To be updated | TBD |
+| Initial analysis and visualizations | Zijian | Injury variables ready; comparisons/charts pending | Nov. 18 target; depends on integration |
 | Workflow automation and reproducibility | Allen | To be updated | Nov. 30 |
 | Data dictionary and metadata | Stacy | Planned | Dec. 1 |
 | Final README and documentation | Zijian; all contribute | Planned | Dec. 3 |
@@ -131,7 +137,7 @@ In the vehicles assessment and cleaning process, the major challenge that are me
 
 ### 5.3 People and Analysis — Zijian
 
-[Zijian: Add challenges, solutions, and next steps.]
+Missing injury classifications must not become no injury. Nullable injury fields preserve this distinction. Vehicle metadata also suggested a different identifier; actual matching confirmed the plan's `vehicle_id` linkage. Allen's current export omits this field, so assessment uses raw Vehicles. Next, coordinate its retention and consistent ID formatting with Allen and Netsh, complete comparisons and charts, and contribute field definitions and the final README.
 
 ### 5.4 Integration — Netsh
 
@@ -139,7 +145,10 @@ In the vehicles assessment and cleaning process, the major challenge that are me
 
 ### 5.5 Outstanding Issues
 
-[All members: Summarize unresolved issues, responsible members, and planned actions.]
+- **People/vehicle linkage:** Allen and Netsh need to retain `vehicle_id` and normalize IDs on both sides before integration.
+- **People deliverables:** Zijian's comparisons and charts remain pending. Input and cleaned data snapshots exceed 50 MB; their course-required shared access still needs coordination with Stacy and Allen.
+
+[Other members: Add remaining issues and planned actions.]
 
 ---
 
@@ -156,7 +165,7 @@ I am responsible for vehicles dataset's data quality assessment, data cleaning a
 
 ### Zijian
 
-[Zijian: Add personal contribution summary.]
+I am responsible for the People assessment and cleaning scripts, documented injury mappings, and quality reports. This milestone includes full-data checks, CSV validation, and three regression tests. I documented missing classifications and verified vehicle linkage. Remaining work includes comparative analysis, visualizations, People field documentation, and compiling the final README.
 
 ### Netsh
 
@@ -173,4 +182,11 @@ I am responsible for vehicles dataset's data quality assessment, data cleaning a
 - [Crashes Cleaning Script](clean_crashes.py)
 - [Crashes Quality Report](docs/crashes_quality_report.md)
 
+- [People Assessment Script](assess_people.py)
+- [People Cleaning Script](clean_people.py)
+- [People Quality Report and Run Instructions](docs/people_quality_report.md)
+- [People Assessment and Validation Results](results/people/verification_summary.json)
+- [People Regression Tests](tests/test_people.py)
+
 [Add links to other completed artifacts.]
+
