@@ -63,19 +63,17 @@ Cleaning standardized identifiers and dates, preserved all records, and added in
 
 ### 2.5 Data Integration and Quality Assessment — Netsh
 
-We used `integrate_data.py` to left-join cleaned People (246,702 records) to Crashes on `crash_record_id` and to Vehicles on `crash_record_id + vehicle_id`, using only Vehicles records with a `vehicle_id`. We checked that join keys were unique and row counts unchanged, so every People record appears once. IDs were uppercased on all sides first, because Crashes and Vehicles store them in lowercase. Allen's cleaned Vehicles file first dropped `vehicle_id`, so we initially joined raw Vehicles. After Allen updated `vehicle_assessment.py` to keep `vehicle_id`, we switched `integrate_data.py` to his cleaned file and reran all checks with the same results. `assess_integration.py` checked the result:
+We used `integrate_data.py` to left-join cleaned People records with Crashes on `crash_record_id` and Vehicles on `crash_record_id + vehicle_id`. We standardized identifier capitalization and used Allen's updated cleaned Vehicles file, which retains `vehicle_id`.
 
-- **Accuracy:** Linked crash dates agreed for every record. Person-level injury counts matched `injuries_total` and each severity field for all 111,807 crashes with injury data. The other 249 crashes have no People records.
-- **Completeness:** All People matched Crashes, and 240,716 matched Vehicles; no record with a `vehicle_id` failed to match. 5,940 pedestrians, cyclists, and non-motor-vehicle records have no vehicle by design. 37 drivers and 9 non-contact-vehicle records lack a `vehicle_id` in the source.
-- **Timeliness:** All dates fall in 2024. We downloaded the data on Nov. 15, 2026. People was last updated one day before Crashes and Vehicles, with no effect on links.
-- **Consistency:** Person, crash, unit, and crash–vehicle IDs are unique, with no unusual formats. Row counts did not change after either join.
+The integrated dataset contains 246,702 records and 72 columns, with no records lost or duplicated. All People records matched Crashes, and 240,716 matched Vehicles. The remaining 5,986 records lacked `vehicle_id`, including 37 drivers who cannot be linked to a vehicle type.
 
-The integrated dataset has 246,702 records and 72 columns. For RQ2, 147,010 linked drivers and passengers were in passenger cars and 40,093 in SUVs. We excluded 53,595 in other or unknown vehicle types and 37 without a vehicle link. All eight validation checks passed.
+Using `assess_integration.py`, we checked completeness, accuracy, consistency, and timeliness. All eight validation checks passed, including injury-count consistency, date agreement, and identifier uniqueness. For the passenger-car/SUV comparison, 147,010 linked drivers and passengers were in passenger cars and 40,093 were in SUVs.
 
-**Artifacts:** [integration](integrate_data.py), [assessment](assess_integration.py), [quality report](docs/integration_quality_report.md), [validation](results/integration/validation.csv).
+**Artifacts:** [Integration Script](integrate_data.py), [Assessment Script](assess_integration.py), [Quality Report](docs/integration_quality_report.md), [Validation Results](results/integration/validation.csv).
+
 ### 2.6 Initial Analysis and Visualizations — Zijian
 
-Injury mappings and denominator rules are implemented: 246,663 records have known classifications, including 25,706 injured people. These are preparation counts across the full People dataset, not completed research-question comparisons. Group comparisons, severity charts, and passenger-car/SUV analysis remain pending. Next, we will produce group tables and charts and use Netsh's validated integrated output for vehicle comparisons.
+Injury mappings and denominator rules are implemented: 246,663 records have known classifications, including 25,706 injured people. These are preparation counts across the full People dataset, not completed research-question comparisons. Group comparisons, severity charts, and passenger-car/SUV analysis remain pending. Next, we will use the validated integrated dataset to compare injury proportions across groups and create the planned visualizations.
 
 **Artifact:** [Classification counts](results/people/injury_classification_counts.csv).
 
@@ -123,7 +121,7 @@ In response to the instructor's feedback, we made our progress descriptions more
 
 ### 4.2 Changes to Methods, Scope, or Timeline
 
-The research questions and overall approach remain unchanged. The current data extracts contain 112,056 Crashes records and 228,316 Vehicles records, compared with 112,057 and 228,318 in the initial extracts documented in the Project Plan. The People dataset remains at 246,702 records. We recorded the current counts and SHA-256 checksums to document the files used in this stage. The reason for the small differences has not been determined.
+The research questions and overall approach remain unchanged. Compared with the initial extracts in the Project Plan, the current Crashes and Vehicles datasets contain one and two fewer records, respectively, while the People record count is unchanged. We recorded the current counts and SHA-256 checksums. The reason for these differences has not been determined.
 The interim report deadline was also updated from November 19 to November 16 to match the date listed in Canvas.
 
 ---
@@ -134,43 +132,44 @@ The interim report deadline was also updated from November 19 to November 16 to 
 
 The main challenge was deciding how to handle incomplete or potentially inconsistent records without changing valid information. For example, work-zone fields may be blank because they do not apply to a crash, while unusual speed limits and conflicting injury classifications cannot be resolved from the available data.
 
-We therefore retained uncertain values and flagged identifiable conflicts instead of making unsupported corrections. My next tasks are to compile the data dictionary and prepare the JSON-LD metadata. The Crashes assessment results will also support the team's subsequent integration checks.
+We therefore retained uncertain values and flagged identifiable conflicts instead of making unsupported corrections. My next tasks are to compile the data dictionary and prepare the JSON-LD metadata. The Crashes assessment results also support the team's completed integration checks and may inform further validation during the final project stage.
 
 ### 5.2 Vehicles and Automation — Allen
-During the Vehicles assessment and cleaning process, the main challenges included retrieving large datasets through the API, correcting Crash ID validation errors, and handling missing or unknown Vehicle Type classifications. To address these issues, we implemented API pagination to retrieve 228,316 vehicle records, corrected the ID validation logic, and standardized vehicle classifications while preserving unresolved values to avoid affecting subsequent analysis. Additionally, we developed an automated Python workflow for data retrieval, quality assessment, cleaning, and export, reducing manual processing. Moving forward, we plan to integrate the cleaned vehicle data with other team datasets, verify workflow reproducibility, and improve documentation and error handling to enhance efficiency and reliability.
+The main challenges were retrieving large datasets through the API, correcting crash ID validation errors, and handling missing or unknown vehicle types. We addressed these issues through API pagination, revised ID validation logic, and standardized vehicle classifications while preserving unresolved values. Next, we will integrate the automated workflow with the team's other scripts, improve documentation, and test reproducibility.
 
 ### 5.3 People and Analysis — Zijian
 
-Missing injury classifications must not be treated as no injury, so nullable injury fields were preserved. Vehicle linkage initially required additional validation because of identifier differences. This issue was resolved after Allen updated the cleaned Vehicles file to retain `vehicle_id`, allowing integration to use the processed data. Next, we will complete the group comparisons and charts, contribute field definitions, and prepare the final README.
+Missing injury classifications were preserved rather than treated as no injury. The vehicle linkage issue was resolved after Allen updated the cleaned Vehicles file to retain `vehicle_id`. Next, we will complete the injury comparisons and visualizations, contribute field definitions, and prepare the final README.
 
 ### 5.4 Integration — Netsh
 
-The main challenge was linking Vehicles. Allen's cleaned file first dropped `vehicle_id`, and Crashes and Vehicles store IDs in lowercase while cleaned People uses uppercase, so a direct join would match nothing. We uppercased IDs on all sides and, at first, joined raw Vehicles using Allen's vehicle-type rule. Allen then updated `vehicle_assessment.py` to keep `vehicle_id`, so I switched `integrate_data.py` to his cleaned file; all counts and checks stayed the same. We kept and labeled the 46 People records without a `vehicle_id` instead of dropping them. Next, I will share the 162 MB integrated file through Box, support Zijian's vehicle comparison, and add both scripts to the run-all workflow.
+The main challenge was linking Vehicles because the initial cleaned file lacked `vehicle_id` and identifier capitalization differed across datasets. We standardized ID capitalization and switched to Allen's updated cleaned Vehicles file. All integration checks passed without dropping or duplicating People records. We retained and documented the 46 records without `vehicle_id` that were identified as drivers or non-contact-vehicle records. Next, I will share the integrated dataset through Box, support the vehicle comparison, and add `integrate_data.py` and `assess_integration.py` to the run-all workflow.
 
 ### 5.5 Outstanding Issues
 
 - **People deliverables:** Zijian's comparisons and charts remain pending. Input and cleaned data snapshots exceed 50 MB; their course-required shared access still needs coordination with Stacy and Allen.
 - **Integrated data:** The integrated file (165 MB) exceeds 50 MB and needs the shared Box link.
-- **Unlinked drivers:** 37 drivers have no `vehicle_id` in the source and are excluded from the vehicle comparison.
-
+- **Unlinked drivers:** 37 drivers lack `vehicle_id` in the source data and will be excluded from the passenger-car/SUV comparison.
+  
 ---
 
 ## 6. Individual Contributions
 
 ### 6.1 Stacy
 
-I developed the acquisition and verification scripts, assessed the Crashes dataset, created the quality flags, and validated the processed output. I also documented the findings and committed the scripts and report to GitHub. My remaining responsibilities are compiling the data dictionary, preparing JSON-LD metadata, and coordinating the final release.
+I developed the data acquisition and verification scripts, assessed and cleaned the Crashes dataset, and validated the processed output. I documented the findings and committed the scripts and quality report to GitHub. My remaining tasks are preparing the data dictionary and JSON-LD metadata and coordinating the final release.
 
 ### 6.2 Allen
-I was responsible for the Vehicles dataset's data quality assessment, data cleaning, and workflow automation. Using Python and the Chicago Open Data API, I developed an automated data retrieval and processing workflow to assess accuracy, completeness, consistency, and timeliness. I also resolved ID validation issues and standardized vehicle classifications. The final deliverables include cleaned datasets and quality reports to support the team's subsequent analysis.
+
+I assessed and cleaned the Vehicles dataset and developed a Python workflow for automated data retrieval, quality checks, and processing. I corrected identifier validation issues, standardized vehicle classifications, and produced cleaned data and a quality report to support the team's analysis.
 
 ### 6.3 Zijian
 
-I am responsible for the People assessment and cleaning scripts, documented injury mappings, and quality reports. This milestone includes full-data checks, CSV validation, and three regression tests. I documented missing classifications and verified vehicle linkage. Remaining work includes comparative analysis, visualizations, People field documentation, and compiling the final README.
+I developed the People assessment and cleaning scripts, documented injury classifications, and completed data quality checks, CSV validation, and three regression tests. I also verified vehicle linkage and prepared the quality report. My remaining tasks include comparative analysis, visualizations, field documentation, and the final README.
 
 ### 6.4 Netsh
 
-I am responsible for integrating the cleaned datasets and assessing the integrated data. I wrote `integrate_data.py`, which joins People to Crashes and Vehicles without dropping or duplicating records, and `assess_integration.py`, which checks accuracy, completeness, timeliness, and consistency and saves the results. I also wrote the integration quality report and switched integration to Allen's cleaned Vehicles file once it kept `vehicle_id`. Remaining work includes sharing the integrated file, adding both scripts to the run-all workflow, and documenting integration fields for the data dictionary.
+I developed `integrate_data.py` and `assess_integration.py` to combine the cleaned datasets and validate the results without losing or duplicating People records. I documented the integration checks and updated the workflow to use Allen's cleaned Vehicles file. My remaining tasks are sharing the integrated dataset, adding both scripts to the run-all workflow, and documenting integration fields for the data dictionary.
 
 ---
 
