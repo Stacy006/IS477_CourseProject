@@ -93,6 +93,58 @@ v.loc[v["vehicle_type"].isin({"SUV", "SPORT UTILITY VEHICLE (SUV)"}), "vehicle_g
 results.update({f"Vehicle group: {x}": int(n) for x, n in v["vehicle_group"].value_counts().items()})
 results.update({f"Type status: {x}": int(n) for x, n in v["type_status"].value_counts().items()})
 
+
+# Check VEHICLE_ID format
+valid = v["vehicle_id"].str.fullmatch(r"\d+")
+missing = v["vehicle_id"].eq("")
+
+print("Invalid VEHICLE_ID:", (~valid & ~missing).sum())
+
+# Check duplicate crash-vehicle keys (exclude missing IDs)
+linked = v[~missing]
+
+print("Duplicate crash-vehicle pairs:",
+      linked.duplicated(
+          ["crash_record_id", "vehicle_id"]
+      ).sum())
+
+vid = v["vehicle_id"].fillna("").astype(str).str.strip()
+missing = vid.eq("")
+
+# Check invalid IDs
+invalid = (~vid.str.fullmatch(r"\d+")) & ~missing
+
+print("Invalid VEHICLE_ID:", invalid.sum())
+
+# Check duplicate crash-vehicle ID combinations
+linked = v[~missing].copy()
+
+duplicates = linked.duplicated(
+    subset=["crash_record_id", "vehicle_id"]
+)
+
+print("Duplicate crash-vehicle pairs:", duplicates.sum())
+vid = v["vehicle_id"].fillna("").astype(str).str.strip()
+missing = vid.eq("")
+
+# Check 1: Invalid vehicle IDs
+invalid = ~vid.str.fullmatch(r"\d+") & ~missing
+
+print("Invalid VEHICLE_ID:", invalid.sum())
+
+# Check 2: Duplicate crash-vehicle combinations
+linked = v[~missing]
+
+duplicates = linked.duplicated(
+    subset=["crash_record_id", "vehicle_id"]
+)
+
+print("Duplicate crash-vehicle pairs:", duplicates.sum())
+
+# Check 3: Missing vehicle IDs by unit type
+print("\nMissing VEHICLE_ID by UNIT_TYPE:")
+print(v.loc[missing, "unit_type"].value_counts())
+
 # 7. Save all rows and a separate analysis-ready comparison file.
 v.to_csv(out / "vehicles_2024_cleaned.csv", index=False)
 valid = (v["vehicle_group"].isin(["PASSENGER_CAR", "SUV"]) & unit_ok & crash_ok
@@ -102,3 +154,5 @@ pd.DataFrame(results.items(), columns=["Check", "Count"]).to_csv(out / "quality_
 print("\n", pd.DataFrame(results.items(), columns=["Check", "Count"]).to_string(index=False))
 print("\nResults saved to:", out)
 print("Note: Filtering by crash_date excludes undated source records from this extract.")
+print(v[["crash_unit_id", "vehicle_id"]].head())
+print("Missing VEHICLE_ID:", v["vehicle_id"].eq("").sum())
