@@ -49,7 +49,7 @@ We assessed the Vehicles dataset across four data quality dimensions:
 
 The missing vehicle types can not be inferred accurately. Therefore, we have preserved all records, standardized categories, and separated unresolved values. The cleaned dataset contains 228,316 records, classified into 136,486 passenger cars, 35,781 SUV, and 56,049 other units.
 
-**Artifacts:** 
+**Artifacts:** [Vehicles Assessment Python Script](vehicle_assessment.py)
 
 ### 2.4 People Assessment and Cleaning — Zijian
 
